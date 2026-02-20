@@ -1,1 +1,10 @@
-<Solution />
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SurveyBasket.API/SurveyBasket.API.csproj" Id="386fd91b-ca9b-40fc-8949-30357335825b" />
+    <Project Path="src/SurveyBasket.Application/SurveyBasket.Application.csproj" Id="fd31cbbd-3761-4f8d-8f33-75850b5020c7" />
+    <Project Path="src/SurveyBasket.Domain/SurveyBasket.Domain.csproj" Id="45838a67-39e9-4ab2-91e8-3195df8d36c3" />
+    <Project Path="src/SurveyBasket.Infrastructure/SurveyBasket.Infrastructure.csproj" Id="26557c34-5f75-4ad5-9c2f-a68db034d587" />
+  </Folder>
+  <Folder Name="/tests/">
+  </Folder>
+</Solution>
