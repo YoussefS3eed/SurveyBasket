@@ -1,5 +1,6 @@
-using Application.Behaviors;
+using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
+using SurveyBasket.Application.Behaviors;
 using System.Reflection;
 
 namespace SurveyBasket.Application.Extensions;
@@ -8,22 +9,20 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
+        var assamply = Assembly.GetExecutingAssembly();
+
         services.AddMediatR(cfg =>
         {
-            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            cfg.RegisterServicesFromAssembly(assamply);
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         });
 
-        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddValidatorsFromAssembly(assamply);
 
-        //services.AddAutoMapper(applicationAssembly);
+        var mappingConfig = TypeAdapterConfig.GlobalSettings;
+        mappingConfig.Scan(assamply);
+        services.AddSingleton<IMapper>(new Mapper(mappingConfig));
 
-        //services.AddValidatorsFromAssembly(applicationAssembly)
-        //    .AddFluentValidationAutoValidation();
-
-        //services.AddScoped<IUserContext, UserContext>();
-
-        //services.AddHttpContextAccessor();
         return services;
     }
 }

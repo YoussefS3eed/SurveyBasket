@@ -1,3 +1,3 @@
-﻿namespace SurveyBasket.Application.Polls.Commands.TogglePublishPoll;
+﻿namespace SurveyBasket.Application.Polls.Commands.TogglePublish;
 
-public record TogglePublishCommand(int Id) : IRequest<Unit>;
+public record TogglePublishCommand(int Id) : IRequest<Result>;

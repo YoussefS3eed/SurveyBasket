@@ -4,18 +4,24 @@ using SurveyBasket.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add Clean Architecture layers
-builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddScoped<RequestTimeLoggingMiddleware>();
+
+
+//builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
+//    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -24,9 +30,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<RequestTimeLoggingMiddleware>();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+//app.MapIdentityApi<ApplicationUser>();
 
 app.MapControllers();
 

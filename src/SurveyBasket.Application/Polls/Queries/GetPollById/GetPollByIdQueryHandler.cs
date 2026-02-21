@@ -1,14 +1,15 @@
 ﻿namespace SurveyBasket.Application.Polls.Queries.GetPollById;
 
 public class GetPollByIdQueryHandler(IPollRepository pollRepository)
-    : IRequestHandler<GetPollByIdQuery, PollResponseDto>
+    : IRequestHandler<GetPollByIdQuery, Result<PollDto>>
 {
-    public async Task<PollResponseDto> Handle(GetPollByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PollDto>> Handle(GetPollByIdQuery request, CancellationToken cancellationToken)
     {
         var poll = await pollRepository.GetByIdAsync(request.Id, cancellationToken);
-        if (poll is null)
-            throw new PollNotFoundException(request.Id);
 
-        return poll.Adapt<PollResponseDto>();
+        if (poll is null)
+            return Result.Failure<PollDto>(Error.NotFound);
+
+        return Result.Success(poll.Adapt<PollDto>());
     }
 }

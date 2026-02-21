@@ -1,5 +1,7 @@
 ﻿namespace SurveyBasket.Domain.Exceptions;
 
-public abstract class NotFoundException(string message) : Exception(message)
+public class NotFoundException : Exception
 {
+    public NotFoundException(string entityName, object key)
+        : base($"Entity \"{entityName}\" ({key}) was not found.") { }
 }

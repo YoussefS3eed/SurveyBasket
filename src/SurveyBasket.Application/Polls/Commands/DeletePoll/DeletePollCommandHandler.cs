@@ -1,19 +1,16 @@
 ﻿namespace SurveyBasket.Application.Polls.Commands.DeletePoll;
 
-internal class DeletePollCommandHandler
-    (
-        //ILogger<DeletePollCommandHandler> logger,
-        IPollRepository pollRepository
-    )
-    : IRequestHandler<DeletePollCommand, Unit>
+public class DeletePollCommandHandler(IPollRepository pollRepository)
+    : IRequestHandler<DeletePollCommand, Result>
 {
-    public async Task<Unit> Handle(DeletePollCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(DeletePollCommand request, CancellationToken cancellationToken)
     {
         var poll = await pollRepository.GetByIdAsync(request.Id, cancellationToken);
+
         if (poll is null)
-            throw new PollNotFoundException(request.Id);
+            return Result.Failure(Error.NotFound);
 
         await pollRepository.DeleteAsync(poll, cancellationToken);
-        return Unit.Value;
+        return Result.Success();
     }
 }

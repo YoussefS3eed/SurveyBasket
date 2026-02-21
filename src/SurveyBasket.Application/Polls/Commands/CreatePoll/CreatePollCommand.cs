@@ -1,4 +1,9 @@
 ﻿namespace SurveyBasket.Application.Polls.Commands.CreatePoll;
 
-public sealed record CreatePollCommand(PollRequestDto PollRequestDto) : IRequest<PollResponseDto>;
-
+public record CreatePollCommand(
+    string Title,
+    string Summary,
+    bool IsPublished,
+    DateOnly StartsAt,
+    DateOnly EndsAt
+) : IRequest<Result<PollDto>>;

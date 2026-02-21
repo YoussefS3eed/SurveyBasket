@@ -1,16 +1,18 @@
-﻿using SurveyBasket.Application.Polls.Commands.TogglePublishPoll;
+﻿namespace SurveyBasket.Application.Polls.Commands.TogglePublish;
 
-namespace SurveyBasket.Application.Polls.Commands.TogglePublish;
-
-public class TogglePublishCommandHandler(IPollRepository pollRepository)
-    : IRequestHandler<TogglePublishCommand, Unit>
+public class TogglePublishHandler(IPollRepository pollRepository)
+    : IRequestHandler<TogglePublishCommand, Result>
 {
-    public async Task<Unit> Handle(TogglePublishCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(TogglePublishCommand request, CancellationToken cancellationToken)
     {
-        var toggled = await pollRepository.TogglePublishAsync(request.Id, cancellationToken);
-        if (!toggled)
-            throw new PollNotFoundException(request.Id);
+        var poll = await pollRepository.GetByIdAsync(request.Id, cancellationToken);
 
-        return Unit.Value;
+        if (poll is null)
+            return Result.Failure(Error.NotFound);
+
+        poll.IsPublished = !poll.IsPublished;
+        await pollRepository.UpdateAsync(poll, cancellationToken);
+
+        return Result.Success();
     }
 }

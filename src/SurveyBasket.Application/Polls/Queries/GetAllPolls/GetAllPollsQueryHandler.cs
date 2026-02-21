@@ -1,11 +1,11 @@
 ﻿namespace SurveyBasket.Application.Polls.Queries.GetAllPolls;
 
 public class GetAllPollsQueryHandler(IPollRepository pollRepository)
-    : IRequestHandler<GetAllPollsQuery, IEnumerable<PollResponseDto>>
+    : IRequestHandler<GetAllPollsQuery, Result<IEnumerable<PollDto>>>
 {
-    public async Task<IEnumerable<PollResponseDto>> Handle(GetAllPollsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<PollDto>>> Handle(GetAllPollsQuery request, CancellationToken cancellationToken)
     {
         var polls = await pollRepository.GetAllAsync(cancellationToken);
-        return polls.Adapt<IEnumerable<PollResponseDto>>();
+        return Result.Success(polls.Adapt<IEnumerable<PollDto>>());
     }
 }

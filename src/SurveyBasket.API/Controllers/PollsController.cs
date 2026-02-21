@@ -1,24 +1,26 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using SurveyBasket.API.Controllers.Base;
 using SurveyBasket.Application.Polls.Commands.CreatePoll;
 using SurveyBasket.Application.Polls.Commands.DeletePoll;
-using SurveyBasket.Application.Polls.Commands.TogglePublishPoll;
+using SurveyBasket.Application.Polls.Commands.TogglePublish;
 using SurveyBasket.Application.Polls.Commands.UpdatePoll;
 using SurveyBasket.Application.Polls.Dtos;
 using SurveyBasket.Application.Polls.Queries.GetAllPolls;
 using SurveyBasket.Application.Polls.Queries.GetPollById;
 
-namespace SurveyBasket.Web.Controllers;
+namespace SurveyBasket.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class PollsController(ISender sender) : ControllerBase
+//[Authorize]
+public class PollsController(ISender sender) : ApiController
 {
     [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var query = new GetAllPollsQuery();
         var result = await sender.Send(query, cancellationToken);
-        return Ok(result);
+        return HandleResult(result);
     }
 
     [HttpGet("{id}")]
@@ -26,38 +28,42 @@ public class PollsController(ISender sender) : ControllerBase
     {
         var query = new GetPollByIdQuery(id);
         var result = await sender.Send(query, cancellationToken);
-        return Ok(result);
+        return HandleResult(result);
     }
 
     [HttpPost("")]
-    public async Task<IActionResult> Create(PollRequestDto request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreatePollRequest request, CancellationToken cancellationToken)
     {
-        var command = new CreatePollCommand(request);
+        var command = request.Adapt<CreatePollCommand>();
         var result = await sender.Send(command, cancellationToken);
-        return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
+
+        if (result.IsFailure)
+            return HandleResult(result);
+
+        return CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, PollRequestDto request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdatePollRequest request, CancellationToken cancellationToken)
     {
-        var command = new UpdatePollCommand(id, request);
-        await sender.Send(command, cancellationToken);
-        return NoContent();
+        var command = request.Adapt<UpdatePollCommand>() with { Id = id };
+        var result = await sender.Send(command, cancellationToken);
+        return HandleResult(result);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
         var command = new DeletePollCommand(id);
-        await sender.Send(command, cancellationToken);
-        return NoContent();
+        var result = await sender.Send(command, cancellationToken);
+        return HandleResult(result);
     }
 
     [HttpPut("{id}/togglePublish")]
     public async Task<IActionResult> TogglePublish(int id, CancellationToken cancellationToken)
     {
         var command = new TogglePublishCommand(id);
-        await sender.Send(command, cancellationToken);
-        return NoContent();
+        var result = await sender.Send(command, cancellationToken);
+        return HandleResult(result);
     }
 }

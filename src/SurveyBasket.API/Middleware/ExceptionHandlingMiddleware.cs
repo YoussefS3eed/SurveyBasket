@@ -31,10 +31,20 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
 
         switch (exception)
         {
-            case PollNotFoundException notFound:
+            case NotFoundException notFound:
                 problemDetails.Status = StatusCodes.Status404NotFound;
                 problemDetails.Title = "Resource Not Found";
                 problemDetails.Detail = notFound.Message;
+                break;
+            case BadRequestException badRequest:
+                problemDetails.Status = StatusCodes.Status400BadRequest;
+                problemDetails.Title = "Bad Request";
+                problemDetails.Detail = badRequest.Message;
+                break;
+            case UnauthorizedException unauthorized:
+                problemDetails.Status = StatusCodes.Status401Unauthorized;
+                problemDetails.Title = "Unauthorized";
+                problemDetails.Detail = unauthorized.Message;
                 break;
             case ValidationException validationEx:
                 problemDetails.Status = StatusCodes.Status400BadRequest;
@@ -43,7 +53,6 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
                     .GroupBy(e => e.PropertyName)
                     .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
                 break;
-                // Add other custom exceptions as needed
         }
 
         context.Response.StatusCode = problemDetails.Status.Value;

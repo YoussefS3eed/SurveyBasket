@@ -1,17 +1,18 @@
 ﻿namespace SurveyBasket.Application.Polls.Commands.UpdatePoll;
 
 public class UpdatePollCommandHandler(IPollRepository pollRepository)
-    : IRequestHandler<UpdatePollCommand, Unit>
+    : IRequestHandler<UpdatePollCommand, Result>
 {
-    public async Task<Unit> Handle(UpdatePollCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdatePollCommand request, CancellationToken cancellationToken)
     {
         var poll = await pollRepository.GetByIdAsync(request.Id, cancellationToken);
-        if (poll is null)
-            throw new PollNotFoundException(request.Id);
 
-        request.PollRequestDto.Adapt(poll);
+        if (poll is null)
+            return Result.Failure(Error.NotFound);
+
+        request.Adapt(poll);
         await pollRepository.UpdateAsync(poll, cancellationToken);
 
-        return Unit.Value;
+        return Result.Success();
     }
 }
