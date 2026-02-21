@@ -23,11 +23,13 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
 
         if (failures.Count != 0)
         {
-            var error = new Error(
-                "ValidationError",
-                string.Join("; ", failures.Select(f => f.ErrorMessage)));
-
-            return (dynamic)Result.Failure(error);
+            //var error = Error.Validation with
+            //{
+            //    Description = string.Join("; ", failures.Select(f => f.ErrorMessage))
+            //};
+            //var error = new Error("Error.Validation", string.Join("; ", failures.Select(f => f.ErrorMessage)));
+            //return (dynamic)Result.Failure(error);
+            throw new ValidationException(failures);
         }
 
         return await next(cancellationToken);

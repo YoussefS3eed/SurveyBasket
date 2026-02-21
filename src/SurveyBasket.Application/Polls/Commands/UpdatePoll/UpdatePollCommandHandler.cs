@@ -5,6 +5,16 @@ public class UpdatePollCommandHandler(IPollRepository pollRepository)
 {
     public async Task<Result> Handle(UpdatePollCommand request, CancellationToken cancellationToken)
     {
+        var exists = await pollRepository.ExistsByTitleAsync(request.Title, cancellationToken);
+        if (exists)
+        {
+            var error = Error.Conflict with
+            {
+                Description = $"A poll with title '{request.Title}' already exists."
+            };
+            return Result.Failure<PollDto>(error);
+        }
+
         var poll = await pollRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (poll is null)

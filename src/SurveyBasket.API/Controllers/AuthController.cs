@@ -9,7 +9,7 @@ namespace SurveyBasket.API.Controllers;
 [Route("[controller]")]
 public class AuthController(ISender sender) : ApiController
 {
-    [HttpPost("login")]
+    [HttpPost("")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto request, CancellationToken cancellationToken)
     {
         var query = request.Adapt<LoginQuery>();

@@ -30,4 +30,6 @@ internal class PollRepository(ApplicationDbContext context) : IPollRepository
         context.Polls.Remove(poll);
         await context.SaveChangesAsync(cancellationToken);
     }
+    public async Task<bool> ExistsByTitleAsync(string title, CancellationToken cancellationToken = default)
+        => await context.Polls.AnyAsync(p => p.Title == title, cancellationToken);
 }

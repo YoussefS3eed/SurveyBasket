@@ -1,7 +1,6 @@
-﻿// SurveyBasket.Application/Polls/Commands/CreatePoll/CreatePollValidator.cs
-namespace SurveyBasket.Application.Polls.Commands.CreatePoll;
+﻿namespace SurveyBasket.Application.Polls.Commands.UpdatePoll;
 
-public class UpdatePollCommandValidator : AbstractValidator<CreatePollCommand>
+public class UpdatePollCommandValidator : AbstractValidator<UpdatePollCommand>
 {
     public UpdatePollCommandValidator()
     {
@@ -22,11 +21,11 @@ public class UpdatePollCommandValidator : AbstractValidator<CreatePollCommand>
 
         RuleFor(x => x)
             .Must(HasValidDates)
-            .WithName(nameof(CreatePollCommand.EndsAt))
+            .WithName(nameof(UpdatePollCommand.EndsAt))
             .WithMessage("{PropertyName} must be greater than or equals start date");
     }
 
-    private bool HasValidDates(CreatePollCommand command)
+    private bool HasValidDates(UpdatePollCommand command)
     {
         return command.EndsAt >= command.StartsAt;
     }

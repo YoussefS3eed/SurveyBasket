@@ -16,6 +16,7 @@ public abstract class ApiController : ControllerBase
             "Error.NotFound" => NotFound(new { error = result.Error.Description }),
             "Error.Validation" => BadRequest(new { error = result.Error.Description }),
             "Error.Unauthorized" => Unauthorized(new { error = result.Error.Description }),
+            "Error.Conflict" => Conflict(new { error = result.Error.Description }),
             _ => StatusCode(500, new { error = result.Error.Description })
         };
     }
@@ -30,6 +31,7 @@ public abstract class ApiController : ControllerBase
             "Error.NotFound" => NotFound(new { error = result.Error.Description }),
             "Error.Validation" => BadRequest(new { error = result.Error.Description }),
             "Error.Unauthorized" => Unauthorized(new { error = result.Error.Description }),
+            "Error.Conflict" => Conflict(new { error = result.Error.Description }),
             _ => StatusCode(500, new { error = result.Error.Description })
         };
     }
