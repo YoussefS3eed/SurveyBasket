@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SurveyBasket.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using SurveyBasket.Infrastructure.Persistence;
 namespace SurveyBasket.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260222041006_AddrefreshTokensTable")]
+    partial class AddrefreshTokensTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -329,7 +332,7 @@ namespace SurveyBasket.Infrastructure.Migrations
 
                             SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
-                            b1.Property<DateTime>("CreatedOn")
+                            b1.Property<DateTime>("Createdon")
                                 .HasColumnType("datetime2");
 
                             b1.Property<DateTime>("ExpiresOn")
@@ -340,8 +343,7 @@ namespace SurveyBasket.Infrastructure.Migrations
 
                             b1.Property<string>("Token")
                                 .IsRequired()
-                                .HasMaxLength(500)
-                                .HasColumnType("nvarchar(500)");
+                                .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("UserId", "Id");
 

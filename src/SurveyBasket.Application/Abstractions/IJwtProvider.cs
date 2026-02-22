@@ -4,5 +4,7 @@ namespace SurveyBasket.Application.Abstractions;
 
 public interface IJwtProvider
 {
-    (string token, int expiresIn) GenerateToken(ApplicationUser user);
+    (string token, int expiresIn, int refreshTokenExpiryDays) GenerateToken(ApplicationUser user);
+    string GenerateRefreshToken();
+    string? ValidateToken(string token);
 }

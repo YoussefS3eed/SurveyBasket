@@ -4,6 +4,8 @@ namespace SurveyBasket.Domain.Interfaces;
 
 public interface IUserRepository
 {
-    Task<ApplicationUser?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
+    Task UpdateUserAsync(ApplicationUser user);
     Task<bool> CheckPasswordAsync(ApplicationUser user, string password);
+    Task<ApplicationUser?> GetByIdAsync(string id);
+    Task<ApplicationUser?> GetByEmailAsync(string email);
 }

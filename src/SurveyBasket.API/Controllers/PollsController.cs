@@ -1,6 +1,5 @@
 ﻿using Mapster;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using SurveyBasket.API.Controllers.Base;
 using SurveyBasket.Application.Polls.Commands.CreatePoll;
 using SurveyBasket.Application.Polls.Commands.DeletePoll;
