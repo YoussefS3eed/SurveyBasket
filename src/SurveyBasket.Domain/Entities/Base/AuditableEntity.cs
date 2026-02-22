@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.Domain.Entities.Base;
 
-public class AuditableEntity 
+public class AuditableEntity
 {
     public string CreatedById { get; set; } = string.Empty;
     public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
