@@ -1,4 +1,6 @@
-﻿namespace SurveyBasket.Application.Polls.Commands.TogglePublish;
+﻿using SurveyBasket.Application.Errors;
+
+namespace SurveyBasket.Application.Polls.Commands.TogglePublish;
 
 public class TogglePublishHandler(IPollRepository pollRepository)
     : IRequestHandler<TogglePublishCommand, Result>
@@ -8,7 +10,7 @@ public class TogglePublishHandler(IPollRepository pollRepository)
         var poll = await pollRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (poll is null)
-            return Result.Failure(Error.NotFound);
+            return Result.Failure(PollErrors.NotFound);
 
         poll.IsPublished = !poll.IsPublished;
         await pollRepository.UpdateAsync(poll, cancellationToken);

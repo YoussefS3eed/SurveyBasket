@@ -9,18 +9,18 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        var assamply = Assembly.GetExecutingAssembly();
+        var assembly = Assembly.GetExecutingAssembly();
 
         services.AddMediatR(cfg =>
         {
-            cfg.RegisterServicesFromAssembly(assamply);
+            cfg.RegisterServicesFromAssembly(assembly);
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         });
 
-        services.AddValidatorsFromAssembly(assamply);
+        services.AddValidatorsFromAssembly(assembly);
 
         var mappingConfig = TypeAdapterConfig.GlobalSettings;
-        mappingConfig.Scan(assamply);
+        mappingConfig.Scan(assembly);
         services.AddSingleton<IMapper>(new Mapper(mappingConfig));
 
         return services;

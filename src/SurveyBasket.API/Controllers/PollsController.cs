@@ -1,7 +1,6 @@
 ﻿using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using SurveyBasket.API.Controllers.Base;
 using SurveyBasket.Application.Polls.Commands.CreatePoll;
 using SurveyBasket.Application.Polls.Commands.DeletePoll;
@@ -13,7 +12,8 @@ using SurveyBasket.Application.Polls.Queries.GetPollById;
 
 namespace SurveyBasket.API.Controllers;
 
-[DisableCors]
+
+[Route("api/[controller]")]
 [Authorize]
 public class PollsController(ISender sender) : ApiController
 {

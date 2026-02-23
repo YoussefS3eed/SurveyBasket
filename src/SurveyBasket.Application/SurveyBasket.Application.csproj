@@ -18,6 +18,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Authentication\Queries\" />
+	  <Folder Include="Abstractions\" />
 	</ItemGroup>
 
 </Project>

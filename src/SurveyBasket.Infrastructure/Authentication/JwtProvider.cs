@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using SurveyBasket.Application.Abstractions;
+using SurveyBasket.Application.Interfaces;
 using SurveyBasket.Domain.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

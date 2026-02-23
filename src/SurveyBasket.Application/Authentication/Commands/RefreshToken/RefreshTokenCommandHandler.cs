@@ -1,4 +1,5 @@
-﻿using SurveyBasket.Application.Abstractions;
+﻿using SurveyBasket.Application.Errors;
+using SurveyBasket.Application.Interfaces;
 
 namespace SurveyBasket.Application.Authentication.Commands.RefreshToken;
 
@@ -10,18 +11,18 @@ internal class RefreshTokenCommandHandler(IUserRepository userRepository, IJwtPr
         var userId = jwtProvider.ValidateToken(request.Token);
 
         if (string.IsNullOrEmpty(userId))
-            return Result.Failure<AuthResponse>(Error.Unauthorized with { Description = "Invalid access token" });
+            return Result.Failure<AuthResponse>(UserErrors.InvalidJwtToken);
 
         var user = await userRepository.GetByIdAsync(userId);
 
         if (user is null)
-            return Result.Failure<AuthResponse>(Error.Unauthorized with { Description = "Invalid access token" });
+            return Result.Failure<AuthResponse>(UserErrors.InvalidJwtToken);
 
         var storedRefreshToken = user.RefreshTokens
             .SingleOrDefault(rt => rt.Token == request.RefreshToken && rt.IsActive);
 
         if (storedRefreshToken is null)
-            return Result.Failure<AuthResponse>(Error.Unauthorized with { Description = "Invalid access token" });
+            return Result.Failure<AuthResponse>(UserErrors.InvalidRefreshToken);
 
         storedRefreshToken.RevokedOn = DateTime.UtcNow;
 

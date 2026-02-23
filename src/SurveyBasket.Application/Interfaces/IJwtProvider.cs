@@ -1,6 +1,6 @@
 ﻿using SurveyBasket.Domain.Entities;
 
-namespace SurveyBasket.Application.Abstractions;
+namespace SurveyBasket.Application.Interfaces;
 
 public interface IJwtProvider
 {

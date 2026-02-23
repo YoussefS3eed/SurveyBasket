@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using SurveyBasket.Application.Abstractions;
+using SurveyBasket.Application.Interfaces;
 using SurveyBasket.Domain.Entities;
 using SurveyBasket.Domain.Interfaces;
 using SurveyBasket.Infrastructure.Authentication;

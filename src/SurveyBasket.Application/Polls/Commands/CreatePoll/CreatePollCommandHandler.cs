@@ -1,4 +1,5 @@
-﻿using SurveyBasket.Domain.Entities;
+﻿using SurveyBasket.Application.Errors;
+using SurveyBasket.Domain.Entities;
 
 namespace SurveyBasket.Application.Polls.Commands.CreatePoll;
 
@@ -10,7 +11,7 @@ public class CreatePollCommandHandler(IPollRepository pollRepository)
         var exists = await pollRepository.ExistsByTitleAsync(request.Title, cancellationToken);
         if (exists)
         {
-            var error = Error.Conflict with
+            var error = PollErrors.Conflict with
             {
                 Description = $"A poll with title '{request.Title}' already exists."
             };

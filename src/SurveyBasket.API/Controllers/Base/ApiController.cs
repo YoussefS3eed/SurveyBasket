@@ -1,4 +1,5 @@
-﻿using SurveyBasket.Application.Common;
+﻿using SurveyBasket.API.Common;
+using SurveyBasket.Application.Common;
 
 namespace SurveyBasket.API.Controllers.Base;
 
@@ -6,33 +7,50 @@ namespace SurveyBasket.API.Controllers.Base;
 [Route("api/[controller]")]
 public abstract class ApiController : ControllerBase
 {
-    protected IActionResult HandleResult(Result result)
+    protected IActionResult HandleResult(Result result, int? statusCode = default)
     {
         if (result.IsSuccess)
-            return Ok();
+            return StatusCode(GetSuccessStatusCode(statusCode));
+        
+        return result.ToProblem(MapFailureStatusCode(result.Error.Code));
+    }
 
-        return result.Error.Code switch
+    protected IActionResult HandleResult<T>(Result<T> result,int? statusCode)
+    {
+        if (result.IsSuccess)
+            return StatusCode(GetSuccessStatusCode(statusCode), result.Value);
+
+        return result.ToProblem(MapFailureStatusCode(result.Error.Code));
+    }
+
+    private static int MapFailureStatusCode(string failureCode)
+    {
+        var reason = failureCode.Split('.').LastOrDefault() ?? "";
+
+        return reason switch
         {
-            "Error.NotFound" => NotFound(new { error = result.Error.Description }),
-            "Error.Validation" => BadRequest(new { error = result.Error.Description }),
-            "Error.Unauthorized" => Unauthorized(new { error = result.Error.Description }),
-            "Error.Conflict" => Conflict(new { error = result.Error.Description }),
-            _ => StatusCode(500, new { error = result.Error.Description })
+            "Validation" => StatusCodes.Status400BadRequest,
+            "Unauthorized" or "InvalidCredentials" or "InvalidJwtToken" or "InvalidRefreshToken"
+                    => StatusCodes.Status401Unauthorized,
+            "NotFound" => StatusCodes.Status404NotFound,    
+            "Conflict" => StatusCodes.Status409Conflict,
+            _ => StatusCodes.Status500InternalServerError
         };
     }
 
-    protected IActionResult HandleResult<T>(Result<T> result)
+    private int GetSuccessStatusCode(int? statusCode)
     {
-        if (result.IsSuccess)
-            return Ok(result.Value);
+        if (statusCode.HasValue)
+            return statusCode.Value;
 
-        return result.Error.Code switch
+        var method = HttpContext.Request.Method;
+
+        return method switch
         {
-            "Error.NotFound" => NotFound(new { error = result.Error.Description }),
-            "Error.Validation" => BadRequest(new { error = result.Error.Description }),
-            "Error.Unauthorized" => Unauthorized(new { error = result.Error.Description }),
-            "Error.Conflict" => Conflict(new { error = result.Error.Description }),
-            _ => StatusCode(500, new { error = result.Error.Description })
+            "POST" => StatusCodes.Status201Created,
+            "PUT" => StatusCodes.Status204NoContent,
+            "DELETE" => StatusCodes.Status204NoContent,
+            _ => StatusCodes.Status200OK
         };
     }
 }

@@ -32,4 +32,8 @@ internal class PollRepository(ApplicationDbContext context) : IPollRepository
     }
     public async Task<bool> ExistsByTitleAsync(string title, CancellationToken cancellationToken = default)
         => await context.Polls.AnyAsync(p => p.Title == title, cancellationToken);
+
+    public async Task<bool> ExistsByTitleExceptIdAsync(string title, int excludeId, CancellationToken cancellationToken = default)
+        => await context.Polls.AnyAsync(p => p.Title == title && p.Id != excludeId, cancellationToken);
+
 }

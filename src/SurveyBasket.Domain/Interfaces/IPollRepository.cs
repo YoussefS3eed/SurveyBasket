@@ -10,4 +10,5 @@ public interface IPollRepository
     Task UpdateAsync(Poll poll, CancellationToken cancellationToken = default);
     Task DeleteAsync(Poll poll, CancellationToken cancellationToken = default);
     Task<bool> ExistsByTitleAsync(string title, CancellationToken cancellationToken = default);
+    Task<bool> ExistsByTitleExceptIdAsync(string title, int excludeId, CancellationToken cancellationToken = default);
 }

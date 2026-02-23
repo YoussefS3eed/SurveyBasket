@@ -1,6 +1,9 @@
-﻿namespace SurveyBasket.Application.Behaviors;
+﻿using SurveyBasket.Application.Errors;
 
-public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators) : IPipelineBehavior<TRequest, TResponse>
+namespace SurveyBasket.Application.Behaviors;
+
+public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
+    : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
     where TResponse : Result
 {
@@ -23,13 +26,27 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
 
         if (failures.Count != 0)
         {
-            //var error = Error.Validation with
-            //{
-            //    Description = string.Join("; ", failures.Select(f => f.ErrorMessage))
-            //};
-            //var error = new Error("Error.Validation", string.Join("; ", failures.Select(f => f.ErrorMessage)));
-            //return (dynamic)Result.Failure(error);
-            throw new ValidationException(failures);
+
+            var error = Error.Validation with
+            {
+                Description = string.Join("; ", failures.Select(f => f.ErrorMessage))
+            };
+
+            if (typeof(TResponse) == typeof(Result))
+            {
+                return (TResponse)(object)Result.Failure(error);
+            }
+
+            var genericType = typeof(TResponse).GetGenericArguments()[0];
+
+            var failureMethod = typeof(Result)
+                .GetMethod(nameof(Result.Failure), 1, new[] { typeof(Error) })!
+                .MakeGenericMethod(genericType);
+
+            var failureResult = failureMethod.Invoke(null, new object[] { error });
+
+            return (TResponse)failureResult!;
+            //throw new ValidationException(failures);
         }
 
         return await next(cancellationToken);

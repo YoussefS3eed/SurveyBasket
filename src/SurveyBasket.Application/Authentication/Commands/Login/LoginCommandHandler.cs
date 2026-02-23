@@ -1,4 +1,5 @@
-﻿using SurveyBasket.Application.Abstractions;
+﻿using SurveyBasket.Application.Errors;
+using SurveyBasket.Application.Interfaces;
 
 namespace SurveyBasket.Application.Authentication.Commands.Login;
 
@@ -10,12 +11,12 @@ internal class LoginCommandHandler(IUserRepository userRepository, IJwtProvider 
         var user = await userRepository.GetByEmailAsync(request.Email);
 
         if (user is null)
-            return Result.Failure<AuthResponse>(Error.Unauthorized);
+            return Result.Failure<AuthResponse>(UserErrors.InvalidCredentials);
 
         var isValidPassword = await userRepository.CheckPasswordAsync(user, request.Password);
 
         if (!isValidPassword)
-            return Result.Failure<AuthResponse>(Error.Unauthorized);
+            return Result.Failure<AuthResponse>(UserErrors.InvalidCredentials);
 
         var (token, expiresIn, refreshTokenExpiryDays) = jwtProvider.GenerateToken(user);
         var refreshToken = jwtProvider.GenerateRefreshToken();
