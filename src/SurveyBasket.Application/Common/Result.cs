@@ -1,6 +1,4 @@
-﻿using SurveyBasket.Application.Errors;
-
-namespace SurveyBasket.Application.Common;
+﻿namespace SurveyBasket.Application.Common;
 
 public class Result
 {

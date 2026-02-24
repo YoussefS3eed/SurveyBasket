@@ -1,6 +1,4 @@
-﻿using SurveyBasket.Application.Errors;
-
-namespace SurveyBasket.Application.Polls.Commands.DeletePoll;
+﻿namespace SurveyBasket.Application.Polls.Commands.DeletePoll;
 
 public class DeletePollCommandHandler(IPollRepository pollRepository)
     : IRequestHandler<DeletePollCommand, Result>
@@ -10,7 +8,7 @@ public class DeletePollCommandHandler(IPollRepository pollRepository)
         var poll = await pollRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (poll is null)
-            return Result.Failure(PollErrors.NotFound);
+            return Result.Failure(PollErrors.PollNotFound);
 
         await pollRepository.DeleteAsync(poll, cancellationToken);
         return Result.Success();

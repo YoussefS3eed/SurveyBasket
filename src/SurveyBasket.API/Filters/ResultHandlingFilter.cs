@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using SurveyBasket.API.Common;
 using SurveyBasket.Application.Common;
 using SurveyBasket.Application.Errors;
-using System.Reflection;
 
 namespace SurveyBasket.API.Filters;
 

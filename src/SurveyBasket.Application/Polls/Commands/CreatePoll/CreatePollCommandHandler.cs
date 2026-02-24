@@ -1,5 +1,4 @@
-﻿using SurveyBasket.Application.Errors;
-using SurveyBasket.Domain.Entities;
+﻿using SurveyBasket.Domain.Entities;
 
 namespace SurveyBasket.Application.Polls.Commands.CreatePoll;
 
@@ -8,7 +7,7 @@ public class CreatePollCommandHandler(IPollRepository pollRepository)
 {
     public async Task<Result<PollDto>> Handle(CreatePollCommand request, CancellationToken cancellationToken)
     {
-        var exists = await pollRepository.ExistsByTitleAsync(request.Title, cancellationToken);
+        var exists = await pollRepository.ExistsByTitleExceptIdAsync(request.Title, null, cancellationToken);
         if (exists)
         {
             var error = PollErrors.Conflict with

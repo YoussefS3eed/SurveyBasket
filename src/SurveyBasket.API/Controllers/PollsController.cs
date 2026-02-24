@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using SurveyBasket.API.Controllers.Base;
 using SurveyBasket.Application.Polls.Commands.CreatePoll;
 using SurveyBasket.Application.Polls.Commands.DeletePoll;
-using SurveyBasket.Application.Polls.Commands.TogglePublish;
+using SurveyBasket.Application.Polls.Commands.TogglePollPublish;
 using SurveyBasket.Application.Polls.Commands.UpdatePoll;
 using SurveyBasket.Application.Polls.Dtos;
 using SurveyBasket.Application.Polls.Queries.GetAllPolls;
@@ -64,7 +64,7 @@ public class PollsController(ISender sender) : ApiController
     [HttpPut("{id}/togglePublish")]
     public async Task<IActionResult> TogglePublish(int id, CancellationToken cancellationToken)
     {
-        var command = new TogglePublishCommand(id);
+        var command = new TogglePollPublishCommand(id);
         var result = await sender.Send(command, cancellationToken);
         return HandleResult(result);
     }

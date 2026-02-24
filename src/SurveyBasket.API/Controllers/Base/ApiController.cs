@@ -11,11 +11,11 @@ public abstract class ApiController : ControllerBase
     {
         if (result.IsSuccess)
             return StatusCode(GetSuccessStatusCode(statusCode));
-        
+
         return result.ToProblem(MapFailureStatusCode(result.Error.Code));
     }
 
-    protected IActionResult HandleResult<T>(Result<T> result,int? statusCode)
+    protected IActionResult HandleResult<T>(Result<T> result, int? statusCode = default)
     {
         if (result.IsSuccess)
             return StatusCode(GetSuccessStatusCode(statusCode), result.Value);
@@ -32,7 +32,7 @@ public abstract class ApiController : ControllerBase
             "Validation" => StatusCodes.Status400BadRequest,
             "Unauthorized" or "InvalidCredentials" or "InvalidJwtToken" or "InvalidRefreshToken"
                     => StatusCodes.Status401Unauthorized,
-            "NotFound" => StatusCodes.Status404NotFound,    
+            "NotFound" => StatusCodes.Status404NotFound,
             "Conflict" => StatusCodes.Status409Conflict,
             _ => StatusCodes.Status500InternalServerError
         };

@@ -18,5 +18,5 @@ public static class ResultExtensions
 
         return new ObjectResult(problemDetails);
     }
-    
+
 }

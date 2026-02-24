@@ -17,7 +17,7 @@ public class AuthController(ISender sender) : ApiController
     {
         var command = request.Adapt<LoginCommand>();
         var result = await sender.Send(command, cancellationToken);
-        return HandleResult(result,200);
+        return HandleResult(result, 200);
     }
 
     [HttpPut("")]
@@ -25,7 +25,7 @@ public class AuthController(ISender sender) : ApiController
     {
         var command = request.Adapt<RefreshTokenCommand>();
         var result = await sender.Send(command, cancellationToken);
-        return HandleResult(result,200);
+        return HandleResult(result, 200);
     }
 
     [HttpPost("revoke-refresh-token")]
@@ -33,6 +33,6 @@ public class AuthController(ISender sender) : ApiController
     {
         var command = request.Adapt<RevokeRefreshTokenCommand>();
         var result = await sender.Send(command, cancellationToken);
-        return HandleResult(result,204);
+        return HandleResult(result, 204);
     }
 }

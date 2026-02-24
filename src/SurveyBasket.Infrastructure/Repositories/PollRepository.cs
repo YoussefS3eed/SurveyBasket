@@ -1,5 +1,4 @@
-﻿using SurveyBasket.Domain.Entities;
-using SurveyBasket.Domain.Interfaces;
+﻿using SurveyBasket.Domain.Interfaces;
 using SurveyBasket.Infrastructure.Persistence;
 
 namespace SurveyBasket.Infrastructure.Repositories;
@@ -30,10 +29,15 @@ internal class PollRepository(ApplicationDbContext context) : IPollRepository
         context.Polls.Remove(poll);
         await context.SaveChangesAsync(cancellationToken);
     }
-    public async Task<bool> ExistsByTitleAsync(string title, CancellationToken cancellationToken = default)
-        => await context.Polls.AnyAsync(p => p.Title == title, cancellationToken);
 
-    public async Task<bool> ExistsByTitleExceptIdAsync(string title, int excludeId, CancellationToken cancellationToken = default)
-        => await context.Polls.AnyAsync(p => p.Title == title && p.Id != excludeId, cancellationToken);
+    public async Task<bool> ExistsAsync(int id, CancellationToken cancellationToken)
+        => await context.Polls.AnyAsync(x => x.Id == id, cancellationToken);
+
+    public async Task<bool> ExistsByTitleExceptIdAsync(string title, int? excludeId, CancellationToken cancellationToken)
+    {
+        var query = context.Polls.Where(p => p.Title == title);
+        if (excludeId.HasValue) query = query.Where(p => p.Id != excludeId);
+        return await query.AnyAsync(cancellationToken);
+    }
 
 }

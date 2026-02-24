@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using SurveyBasket.Application.Interfaces;
-using SurveyBasket.Domain.Entities;
 using SurveyBasket.Domain.Interfaces;
 using SurveyBasket.Infrastructure.Authentication;
 using SurveyBasket.Infrastructure.Persistence;
@@ -31,6 +30,7 @@ public static class ServiceCollectionExtensions
         // Repositories
         services.AddScoped<IPollRepository, PollRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IQuestionRepository, QuestionRepository>();
 
         // JWT
         services.AddSingleton<IJwtProvider, JwtProvider>();

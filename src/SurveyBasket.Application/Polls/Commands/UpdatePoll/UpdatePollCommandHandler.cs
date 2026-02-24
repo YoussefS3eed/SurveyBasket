@@ -1,6 +1,4 @@
-﻿using SurveyBasket.Application.Errors;
-
-namespace SurveyBasket.Application.Polls.Commands.UpdatePoll;
+﻿namespace SurveyBasket.Application.Polls.Commands.UpdatePoll;
 
 public class UpdatePollCommandHandler(IPollRepository pollRepository)
     : IRequestHandler<UpdatePollCommand, Result>
@@ -20,7 +18,7 @@ public class UpdatePollCommandHandler(IPollRepository pollRepository)
         var poll = await pollRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (poll is null)
-            return Result.Failure(PollErrors.NotFound);
+            return Result.Failure(PollErrors.PollNotFound);
 
         request.Adapt(poll);
         await pollRepository.UpdateAsync(poll, cancellationToken);

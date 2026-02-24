@@ -1,5 +1,4 @@
-﻿using SurveyBasket.Application.Errors;
-using SurveyBasket.Application.Interfaces;
+﻿using SurveyBasket.Application.Interfaces;
 
 namespace SurveyBasket.Application.Authentication.Commands.RefreshToken;
 

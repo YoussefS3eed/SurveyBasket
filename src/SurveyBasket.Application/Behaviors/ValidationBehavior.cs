@@ -1,6 +1,4 @@
-﻿using SurveyBasket.Application.Errors;
-
-namespace SurveyBasket.Application.Behaviors;
+﻿namespace SurveyBasket.Application.Behaviors;
 
 public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse>
