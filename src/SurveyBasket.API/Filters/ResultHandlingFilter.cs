@@ -75,10 +75,8 @@ public class ResultHandlingFilter : IActionFilter
 
     private IActionResult HandleFailure(Error error, ActionExecutedContext context)
     {
-        // Use your existing ResultExtensions.ToProblem to format the error response
         var failureResult = Result.Failure(error);
-        int statusCode = MapErrorToStatusCode(error.Code);
-        return failureResult.ToProblem(statusCode);
+        return failureResult.ToProblem();
     }
 
     private static object? ExtractValue(Result result)

@@ -1,7 +1,4 @@
-﻿using Mapster;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using SurveyBasket.API.Controllers.Base;
+﻿using Microsoft.AspNetCore.Authorization;
 using SurveyBasket.Application.Questions.Commands.CreateQuestion;
 using SurveyBasket.Application.Questions.Commands.ToggleQuestionStatus;
 using SurveyBasket.Application.Questions.Commands.UpdateQuestion;

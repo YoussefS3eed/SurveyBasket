@@ -5,26 +5,32 @@ namespace SurveyBasket.Infrastructure.Repositories;
 
 internal class PollRepository(ApplicationDbContext context) : IPollRepository
 {
-    public async Task<IEnumerable<Poll>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Poll>> GetAllAsync(CancellationToken cancellationToken)
         => await context.Polls.AsNoTracking().ToListAsync(cancellationToken);
 
-    public async Task<Poll?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Poll>> GetCurrentAsync(CancellationToken cancellationToken)
+        => await context.Polls
+            .Where(x => x.IsPublished && x.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow))
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+    public async Task<Poll?> GetByIdAsync(int id, CancellationToken cancellationToken)
         => await context.Polls.FindAsync([id], cancellationToken);
 
-    public async Task<Poll> CreateAsync(Poll poll, CancellationToken cancellationToken = default)
+    public async Task<Poll> CreateAsync(Poll poll, CancellationToken cancellationToken)
     {
         await context.Polls.AddAsync(poll, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         return poll;
     }
 
-    public async Task UpdateAsync(Poll poll, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(Poll poll, CancellationToken cancellationToken)
     {
         context.Polls.Update(poll);
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(Poll poll, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Poll poll, CancellationToken cancellationToken)
     {
         context.Polls.Remove(poll);
         await context.SaveChangesAsync(cancellationToken);
@@ -38,6 +44,13 @@ internal class PollRepository(ApplicationDbContext context) : IPollRepository
         var query = context.Polls.Where(p => p.Title == title);
         if (excludeId.HasValue) query = query.Where(p => p.Id != excludeId);
         return await query.AnyAsync(cancellationToken);
+    }
+
+    public async Task<bool> IsPollAvailableAsync(int pollId, CancellationToken cancellationToken)
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        return await context.Polls
+            .AnyAsync(p => p.Id == pollId && p.IsPublished && p.StartsAt <= today && p.EndsAt >= today, cancellationToken);
     }
 
 }

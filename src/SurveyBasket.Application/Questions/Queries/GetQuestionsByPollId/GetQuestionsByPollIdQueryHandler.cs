@@ -8,7 +8,7 @@ internal sealed class GetQuestionsByPollIdQueryHandler(IQuestionRepository quest
     public async Task<Result<IEnumerable<QuestionResponse>>> Handle(GetQuestionsByPollIdQuery request, CancellationToken cancellationToken)
     {
         var pollExists = await pollRepository.ExistsAsync(request.PollId, cancellationToken);
-        
+
         if (!pollExists)
             return Result.Failure<IEnumerable<QuestionResponse>>(PollErrors.PollNotFound);
 

@@ -1,13 +1,11 @@
-﻿using Mapster;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using SurveyBasket.API.Controllers.Base;
+﻿using Microsoft.AspNetCore.Authorization;
 using SurveyBasket.Application.Polls.Commands.CreatePoll;
 using SurveyBasket.Application.Polls.Commands.DeletePoll;
 using SurveyBasket.Application.Polls.Commands.TogglePollPublish;
 using SurveyBasket.Application.Polls.Commands.UpdatePoll;
 using SurveyBasket.Application.Polls.Dtos;
 using SurveyBasket.Application.Polls.Queries.GetAllPolls;
+using SurveyBasket.Application.Polls.Queries.GetCurrentPolls;
 using SurveyBasket.Application.Polls.Queries.GetPollById;
 
 namespace SurveyBasket.API.Controllers;
@@ -17,10 +15,18 @@ namespace SurveyBasket.API.Controllers;
 [Authorize]
 public class PollsController(ISender sender) : ApiController
 {
-    [HttpGet]
+    [HttpGet("")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var query = new GetAllPollsQuery();
+        var result = await sender.Send(query, cancellationToken);
+        return HandleResult(result);
+    }
+
+    [HttpGet("current")]
+    public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
+    {
+        var query = new GetCurrentPollsQuery();
         var result = await sender.Send(query, cancellationToken);
         return HandleResult(result);
     }

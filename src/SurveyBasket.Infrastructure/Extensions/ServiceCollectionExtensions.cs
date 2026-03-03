@@ -31,6 +31,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPollRepository, PollRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IQuestionRepository, QuestionRepository>();
+        services.AddScoped<IVoteRepository, VoteRepository>();
 
         // JWT
         services.AddSingleton<IJwtProvider, JwtProvider>();

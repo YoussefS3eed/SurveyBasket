@@ -1,7 +1,4 @@
-﻿using Mapster;
-using MediatR;
-using SurveyBasket.API.Controllers.Base;
-using SurveyBasket.Application.Authentication.Commands.Login;
+﻿using SurveyBasket.Application.Authentication.Commands.Login;
 using SurveyBasket.Application.Authentication.Commands.RefreshToken;
 using SurveyBasket.Application.Authentication.Commands.RevokeRefreshToken;
 using SurveyBasket.Application.Authentication.Dtos;

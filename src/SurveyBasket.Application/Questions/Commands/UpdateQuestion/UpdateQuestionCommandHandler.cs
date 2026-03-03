@@ -24,7 +24,7 @@ internal class UpdateQuestionCommandHandler(IQuestionRepository questionReposito
 
         question.Content = request.Content;
 
-        // Merge answers
+
         var currentAnswers = question.Answers.Select(a => a.Content).ToList();
         var newAnswers = request.Answers.Except(currentAnswers).ToList();
         foreach (var answer in newAnswers)

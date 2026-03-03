@@ -1,5 +1,4 @@
 ﻿using SurveyBasket.Application.Questions.Dtos;
-using SurveyBasket.Domain.Entities;
 
 namespace SurveyBasket.Application.Questions.Queries.GetQuestionById;
 
