@@ -1,3 +1,4 @@
+using Serilog;
 using SurveyBasket.API.Extensions;
 using SurveyBasket.API.Middleware;
 using SurveyBasket.Application.Extensions;
@@ -10,6 +11,10 @@ builder.Services.AddAPI(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration)
+);
+
 var app = builder.Build();
 
 // Configure pipeline
@@ -19,12 +24,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseSerilogRequestLogging();
+
 app.UseHttpsRedirection();
 
 app.UseCors();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.UseMiddleware<RequestTimeLoggingMiddleware>();
+//app.UseMiddleware<RequestTimeLoggingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
