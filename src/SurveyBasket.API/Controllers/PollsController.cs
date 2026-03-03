@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using SurveyBasket.Application.Polls.Commands.CreatePoll;
+﻿using SurveyBasket.Application.Polls.Commands.CreatePoll;
 using SurveyBasket.Application.Polls.Commands.DeletePoll;
 using SurveyBasket.Application.Polls.Commands.TogglePollPublish;
 using SurveyBasket.Application.Polls.Commands.UpdatePoll;

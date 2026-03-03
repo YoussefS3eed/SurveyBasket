@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using SurveyBasket.Domain.Interfaces;
 
 namespace SurveyBasket.Infrastructure.Repositories;
 

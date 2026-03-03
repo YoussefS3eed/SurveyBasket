@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using SurveyBasket.Application.Votes.Commands.CreateVote;
+﻿using SurveyBasket.Application.Votes.Commands.CreateVote;
 using SurveyBasket.Application.Votes.Dtos;
 using SurveyBasket.Application.Votes.Queries.GetAvailableQuestions;
 using System.Security.Claims;

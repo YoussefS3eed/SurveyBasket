@@ -1,5 +1,4 @@
-﻿using SurveyBasket.Domain.Interfaces;
-using SurveyBasket.Infrastructure.Persistence;
+﻿using SurveyBasket.Infrastructure.Persistence;
 
 namespace SurveyBasket.Infrastructure.Repositories;
 

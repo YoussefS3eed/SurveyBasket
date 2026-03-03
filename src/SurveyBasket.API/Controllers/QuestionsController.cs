@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using SurveyBasket.Application.Questions.Commands.CreateQuestion;
+﻿using SurveyBasket.Application.Questions.Commands.CreateQuestion;
 using SurveyBasket.Application.Questions.Commands.ToggleQuestionStatus;
 using SurveyBasket.Application.Questions.Commands.UpdateQuestion;
 using SurveyBasket.Application.Questions.Dtos;
