@@ -11,19 +11,6 @@ public class QuestionRepository(ApplicationDbContext context) : IQuestionReposit
         .AsNoTracking()
         .ToListAsync(cancellationToken);
 
-    //public async Task<IEnumerable<Question>> GetAvailableAsync(int pollId, string userId, CancellationToken cancellationToken = default) =>
-    //    await context.Questions
-    //        .Where(x => x.PollId == pollId && x.IsActive)
-    //        .Include(x => x.Answers)
-    //        .Select(q => new QuestionResponse(
-    //            q.Id,
-    //            q.Content
-    //            q.
-    //        ))
-    //        .AsNoTracking()
-    //        .ToListAsync(cancellationToken);
-
-
     public async Task<Question?> GetByIdAsync(int pollId, int id, bool includeAnswers = true, CancellationToken cancellationToken = default)
     {
         var query = context.Questions.AsQueryable();

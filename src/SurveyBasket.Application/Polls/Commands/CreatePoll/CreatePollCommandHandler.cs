@@ -20,6 +20,9 @@ public class CreatePollCommandHandler(IPollRepository pollRepository)
 
         var poll = request.Adapt<Poll>();
         var createdPoll = await pollRepository.CreateAsync(poll, cancellationToken);
+
+
+
         return Result.Success(createdPoll.Adapt<PollDto>());
     }
 }

@@ -63,6 +63,8 @@ public static class ServiceCollectionExtensions
             };
         });
 
+        services.AddCaching(configuration);
+
         return services;
     }
 }

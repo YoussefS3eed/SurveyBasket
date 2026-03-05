@@ -1,4 +1,5 @@
 ﻿using SurveyBasket.Application.Answers.Dtos;
+using SurveyBasket.Application.Polls.Commands.CreatePoll;
 using SurveyBasket.Application.Votes.Dtos;
 using SurveyBasket.Contracts.Results;
 using SurveyBasket.Domain.Entities;
@@ -9,6 +10,16 @@ public class MappingConfigurations : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
+
+        config.NewConfig<CreatePollRequest, CreatePollCommand>()
+            .MapWith(src => new CreatePollCommand(
+                src.Title,
+                src.Summary,
+                src.IsPublished,
+                src.StartsAt,
+                src.EndsAt
+            ));
+
         config.NewConfig<Question, AvailableQuestionResponse>()
             .Map(dest => dest.Answers, src => src.Answers.Where(a => a.IsActive).Adapt<IEnumerable<AnswerResponse>>());
 

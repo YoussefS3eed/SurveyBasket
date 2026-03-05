@@ -15,6 +15,8 @@ public static class ServiceCollectionExtensions
         {
             cfg.RegisterServicesFromAssembly(assembly);
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
+            cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(CacheInvalidationBehavior<,>));
         });
 
         services.AddValidatorsFromAssembly(assembly);
