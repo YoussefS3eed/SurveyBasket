@@ -1,4 +1,5 @@
 ﻿namespace SurveyBasket.Application.Interfaces;
+
 public interface IAppCache
 {
     Task<T?> GetOrCreateAsync<T>(

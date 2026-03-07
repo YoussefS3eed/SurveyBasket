@@ -1,4 +1,5 @@
 ﻿using SurveyBasket.Application.Answers.Dtos;
+using SurveyBasket.Application.Authentication.Commands.Register;
 using SurveyBasket.Application.Polls.Commands.CreatePoll;
 using SurveyBasket.Application.Votes.Dtos;
 using SurveyBasket.Contracts.Results;
@@ -33,6 +34,9 @@ public class MappingConfigurations : IRegister
         config.NewConfig<VoteAnswer, QuestionAnswerResponse>()
             .Map(dest => dest.Question, src => src.Question.Content)
             .Map(dest => dest.Answer, src => src.Answer.Content);
+
+        config.NewConfig<RegisterCommand, ApplicationUser>()
+            .Map(dest => dest.UserName, src => src.Username);
 
     }
 }

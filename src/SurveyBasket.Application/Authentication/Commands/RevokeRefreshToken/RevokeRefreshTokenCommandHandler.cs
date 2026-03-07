@@ -25,7 +25,7 @@ internal class RevokeRefreshTokenCommandHandler(IUserRepository userRepository, 
 
         storedRefreshToken.RevokedOn = DateTime.UtcNow;
 
-        await userRepository.UpdateUserAsync(user);
+        await userRepository.UpdateAsync(user);
 
         return Result.Success();
     }

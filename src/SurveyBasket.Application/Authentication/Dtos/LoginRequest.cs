@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.Application.Authentication.Dtos;
 
 public record LoginRequest(
-    string Email,
+    string EmailOrUserName,
     string Password
 );

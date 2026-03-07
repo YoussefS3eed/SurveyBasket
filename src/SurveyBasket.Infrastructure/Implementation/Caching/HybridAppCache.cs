@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
 using SurveyBasket.Application.Interfaces;
 
-namespace SurveyBasket.Infrastructure.Caching;
+namespace SurveyBasket.Infrastructure.Implementation.Caching;
 
 public class HybridAppCache(HybridCache cache) : IAppCache
 {

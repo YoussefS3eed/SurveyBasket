@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SurveyBasket.Application.Interfaces;
-using SurveyBasket.Infrastructure.Caching;
+using SurveyBasket.Infrastructure.Implementation.Caching;
 
 namespace SurveyBasket.Infrastructure.Extensions;
 

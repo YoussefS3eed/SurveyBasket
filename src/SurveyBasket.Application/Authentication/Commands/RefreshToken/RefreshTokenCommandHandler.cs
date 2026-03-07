@@ -35,13 +35,14 @@ internal class RefreshTokenCommandHandler(IUserRepository userRepository, IJwtPr
             ExpiresOn = refreshTokenExpiration
         });
 
-        await userRepository.UpdateUserAsync(user);
+        await userRepository.UpdateAsync(user);
 
         var response = new AuthResponse(
             user.Id,
-            user.Email,
             user.FirstName,
             user.LastName,
+            user.UserName,
+            user.Email,
             newToken,
             expiresIn,
             newRefreshToken,

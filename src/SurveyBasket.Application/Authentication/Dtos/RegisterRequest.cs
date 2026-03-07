@@ -1,13 +1,9 @@
 ﻿namespace SurveyBasket.Application.Authentication.Dtos;
 
-public record AuthResponse(
-    string Id,
+public record RegisterRequest(
     string FirstName,
     string LastName,
     string Username,
     string Email,
-    string Token,
-    int ExpiresIn,
-    string RefreshToken,
-    DateTime RefreshTokenExpiration
+    string Password
 );
