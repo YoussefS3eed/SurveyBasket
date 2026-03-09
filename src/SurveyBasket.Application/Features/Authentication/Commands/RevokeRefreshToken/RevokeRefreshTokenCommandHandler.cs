@@ -15,7 +15,7 @@ internal class RevokeRefreshTokenCommandHandler(IUserRepository userRepository, 
         if (string.IsNullOrEmpty(userId))
             return Result.Failure<AuthResponse>(UserErrors.InvalidJwtToken);
 
-        var user = await userRepository.GetByIdAsync(userId);
+        var user = await userRepository.GetByIdAsync(userId, cancellationToken);
 
         if (user is null)
             return Result.Failure<AuthResponse>(UserErrors.InvalidJwtToken);

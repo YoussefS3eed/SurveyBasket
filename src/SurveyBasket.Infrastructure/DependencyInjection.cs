@@ -1,5 +1,4 @@
-﻿using Hangfire;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
@@ -8,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using SurveyBasket.Application.Common.Caching;
 using SurveyBasket.Application.Common.Interfaces;
 using SurveyBasket.Domain.Interfaces;
+using SurveyBasket.Infrastructure.Configurations;
 using SurveyBasket.Infrastructure.Persistence;
 using SurveyBasket.Infrastructure.Persistence.Repositories;
 using SurveyBasket.Infrastructure.Services;
@@ -134,17 +134,5 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddBackgroundJobs(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddHangfire(config => config
-            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-            .UseSimpleAssemblyNameTypeSerializer()
-            .UseRecommendedSerializerSettings()
-            .UseSqlServerStorage(
-                configuration.GetConnectionString("HangfireConnection")));
 
-        services.AddHangfireServer();
-
-        return services;
-    }
 }

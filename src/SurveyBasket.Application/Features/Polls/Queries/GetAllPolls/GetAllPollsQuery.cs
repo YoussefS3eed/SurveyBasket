@@ -5,7 +5,7 @@ using SurveyBasket.Domain.Common.Models;
 
 namespace SurveyBasket.Application.Features.Polls.Queries.GetAllPolls;
 
-public record GetAllPollsQuery : ICachedQuery<Result<IEnumerable<PollDto>>>
+public record GetAllPollsQuery : ICachedQuery<Result<IEnumerable<PollResponse>>>
 {
     public string CacheKey => CacheKeys.AllPolls;
     public TimeSpan? Expiration => TimeSpan.FromMinutes(10);

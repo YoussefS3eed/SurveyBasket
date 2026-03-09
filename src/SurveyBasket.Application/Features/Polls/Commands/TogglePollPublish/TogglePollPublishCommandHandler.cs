@@ -1,4 +1,5 @@
-﻿using SurveyBasket.Domain.Common.Models;
+﻿using SurveyBasket.Application.Common.Interfaces;
+using SurveyBasket.Domain.Common.Models;
 using SurveyBasket.Domain.Interfaces;
 using SurveyBasket.Domain.Interfaces.Repositories;
 
@@ -6,7 +7,8 @@ namespace SurveyBasket.Application.Features.Polls.Commands.TogglePollPublish;
 
 public sealed class TogglePollPublishCommandHandler(
     IPollRepository pollRepository,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    IBackgroundJobService backgroundJobService)
     : IRequestHandler<TogglePollPublishCommand, Result>
 {
     public async Task<Result> Handle(
@@ -21,6 +23,9 @@ public sealed class TogglePollPublishCommandHandler(
 
         pollRepository.Update(poll);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        if (poll.IsPublished && poll.StartsAt == DateOnly.FromDateTime(DateTime.UtcNow))
+            backgroundJobService.Enqueue<INotificationService>(notificationService => notificationService.SendNewPollsNotification(poll.Id));
 
         return Result.Success();
     }

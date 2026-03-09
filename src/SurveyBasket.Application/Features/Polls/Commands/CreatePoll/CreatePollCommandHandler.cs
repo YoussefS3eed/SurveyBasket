@@ -9,15 +9,15 @@ namespace SurveyBasket.Application.Features.Polls.Commands.CreatePoll;
 public class CreatePollCommandHandler(
     IPollRepository pollRepository,
     IUnitOfWork unitOfWork)
-    : IRequestHandler<CreatePollCommand, Result<PollDto>>
+    : IRequestHandler<CreatePollCommand, Result<PollResponse>>
 {
-    public async Task<Result<PollDto>> Handle(CreatePollCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PollResponse>> Handle(CreatePollCommand request, CancellationToken cancellationToken)
     {
         var exists = await pollRepository.ExistsByTitleExceptIdAsync(request.Title, null, cancellationToken);
         if (exists)
         {
             var error = PollErrors.DuplicateTitle(request.Title);
-            return Result.Failure<PollDto>(error);
+            return Result.Failure<PollResponse>(error);
         }
 
         var poll = request.Adapt<Poll>();
@@ -25,6 +25,6 @@ public class CreatePollCommandHandler(
         await pollRepository.AddAsync(poll, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(poll.Adapt<PollDto>());
+        return Result.Success(poll.Adapt<PollResponse>());
     }
 }

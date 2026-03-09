@@ -14,12 +14,7 @@ internal sealed class EmailService(
 {
     private readonly EmailSettings _settings = mailSettings.Value;
 
-    // ✅ Pure primitives — no ApplicationUser
-    public async Task SendConfirmationEmailAsync(
-        string toEmail,
-        string displayName,
-        string confirmationLink,
-        CancellationToken ct = default)
+    public async Task SendConfirmationEmailAsync(string toEmail, string displayName, string confirmationLink, CancellationToken ct = default)
     {
         var body = EmailBodyBuilder.GenerateEmailBody("EmailConfirmation",
             new Dictionary<string, string>
@@ -31,11 +26,7 @@ internal sealed class EmailService(
         await SendAsync(toEmail, "✅ Survey Basket: Email Confirmation", body, ct);
     }
 
-    public async Task SendPasswordResetEmailAsync(
-        string toEmail,
-        string displayName,
-        string resetLink,
-        CancellationToken ct = default)
+    public async Task SendPasswordResetEmailAsync(string toEmail, string displayName, string resetLink, CancellationToken ct = default)
     {
         var body = EmailBodyBuilder.GenerateEmailBody("PasswordReset",
             new Dictionary<string, string>
@@ -47,13 +38,8 @@ internal sealed class EmailService(
         await SendAsync(toEmail, "🔐 Survey Basket: Password Reset", body, ct);
     }
 
-    public async Task SendPollNotificationAsync(
-        string toEmail,
-        string displayName,
-        string pollTitle,
-        string pollUrl,
-        DateOnly pollEndDate,
-        CancellationToken ct = default)
+    public async Task SendPollNotificationAsync(string toEmail, string displayName, string pollTitle, string pollUrl,
+        DateOnly pollEndDate, CancellationToken ct = default)
     {
         var body = EmailBodyBuilder.GenerateEmailBody("PollNotification",
             new Dictionary<string, string>
@@ -64,16 +50,12 @@ internal sealed class EmailService(
                 { "{{url}}",     pollUrl                  }
             });
 
+        logger.LogWarning("sendding Notification To users ");
+
         await SendAsync(toEmail, $"📣 Survey Basket: New Poll - {pollTitle}", body, ct);
     }
 
-    // ── Private ───────────────────────────────────────────────────────
-
-    private async Task SendAsync(
-        string toEmail,
-        string subject,
-        string htmlBody,
-        CancellationToken ct = default)
+    private async Task SendAsync(string toEmail, string subject, string htmlBody, CancellationToken ct = default)
     {
         var message = new MimeMessage
         {

@@ -9,8 +9,6 @@ internal sealed class NotificationRepository(
     public async Task<IEnumerable<Poll>> GetPollsForNotificationAsync(
         int? pollId = null, CancellationToken ct = default)
     {
-        // If a specific pollId is given, return that one poll (must be published).
-        // Otherwise return all polls that are published and start today — used by the daily job.
         return pollId.HasValue
             ? await context.Polls
                 .Where(p => p.Id == pollId && p.IsPublished)
@@ -29,7 +27,7 @@ internal sealed class NotificationRepository(
         // TODO: Filter to subscribed/member users only when membership is implemented.
         // For now returns all confirmed users.
         return await userManager.Users
-            .Where(u => u.EmailConfirmed)
+            //.Where(u => u.EmailConfirmed)
             .AsNoTracking()
             .ToListAsync(ct);
     }

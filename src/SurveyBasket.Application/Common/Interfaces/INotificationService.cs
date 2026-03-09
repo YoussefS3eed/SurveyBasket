@@ -2,5 +2,5 @@
 
 public interface INotificationService
 {
-    Task SendNewPollsNotificationAsync(int? pollId = null, CancellationToken cancellationToken = default);
+    Task SendNewPollsNotification(int? pollId = null, CancellationToken cancellationToken = default);
 }

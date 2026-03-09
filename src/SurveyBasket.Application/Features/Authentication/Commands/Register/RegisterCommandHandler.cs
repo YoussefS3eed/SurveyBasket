@@ -9,8 +9,8 @@ namespace SurveyBasket.Application.Features.Authentication.Commands.Register;
 
 internal sealed class RegisterCommandHandler(
     IUserRepository userRepository,
-    IEmailService emailService,
-    IApplicationUrlService urlService,    // ✅ isolates HttpContext
+    IBackgroundJobService backgroundJobService,
+    IApplicationUrlService urlService,
     ILogger<RegisterCommandHandler> logger)
     : IRequestHandler<RegisterCommand, Result>
 {
@@ -24,20 +24,18 @@ internal sealed class RegisterCommandHandler(
         if (await userRepository.IsUsernameExistsAsync(request.Username, cancellationToken))
             return UserErrors.DuplicatedUsername();
 
-        // 2. Create entity using factory method
+
         var user = ApplicationUser.Create(
             request.FirstName,
             request.LastName,
             request.Username,
             request.Email);
 
-        // 3. Persist — wraps IdentityResult internally
         var createResult = await userRepository.CreateAsync(user, request.Password);
 
         if (createResult.IsFailure)
             return createResult.Error;
 
-        // 4. Generate confirmation token
         var code = await userRepository.GenerateEmailConfirmationTokenAsync(user);
         code = code.ToBase64UrlEncoded();
 
@@ -49,12 +47,7 @@ internal sealed class RegisterCommandHandler(
         var confirmationLink =
             $"{origin}/auth/emailConfirmation?userId={user.Id}&code={code}";
 
-        // 6. Send email with primitives only — ✅ no ApplicationUser passed
-        await emailService.SendConfirmationEmailAsync(
-            user.Email!,
-            user.FullName,      // ✅ computed property on ApplicationUser
-            confirmationLink,
-            cancellationToken);
+        backgroundJobService.Enqueue<IEmailService>(emailService => emailService.SendConfirmationEmailAsync(user.Email!, user.FullName, confirmationLink, cancellationToken));
 
         return Result.Success();
     }

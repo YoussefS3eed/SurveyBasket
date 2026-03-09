@@ -8,7 +8,7 @@ namespace SurveyBasket.Application.Features.Authentication.Commands.ResendConfir
 
 internal sealed class ResendConfirmationEmailCommandHandler(
     IUserRepository userRepository,
-    IEmailService emailService,
+    IBackgroundJobService backgroundJobService,
     IApplicationUrlService urlService,
     ILogger<ResendConfirmationEmailCommandHandler> logger)
     : IRequestHandler<ResendConfirmationEmailCommand, Result>
@@ -35,12 +35,8 @@ internal sealed class ResendConfirmationEmailCommandHandler(
         var confirmationLink =
             $"{origin}/auth/emailConfirmation?userId={user.Id}&code={code}";
 
-        // ✅ Primitives — no ApplicationUser
-        await emailService.SendConfirmationEmailAsync(
-            user.Email!,
-            user.FullName,
-            confirmationLink,
-            cancellationToken);
+        backgroundJobService.Enqueue<IEmailService>(emailService => emailService.SendConfirmationEmailAsync(user.Email!, user.FullName, confirmationLink, cancellationToken));
+
 
         return Result.Success();
     }

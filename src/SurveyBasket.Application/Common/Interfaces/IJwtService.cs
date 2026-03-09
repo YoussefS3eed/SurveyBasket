@@ -1,4 +1,4 @@
-﻿using SurveyBasket.Domain.Common;
+﻿using SurveyBasket.Domain.Common.Dtos;
 
 namespace SurveyBasket.Application.Common.Interfaces;
 

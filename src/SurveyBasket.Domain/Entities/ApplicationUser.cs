@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using SurveyBasket.Domain.Common;
+using SurveyBasket.Domain.Common.Dtos;
 
 namespace SurveyBasket.Domain.Entities;
 

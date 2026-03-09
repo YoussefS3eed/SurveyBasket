@@ -40,4 +40,10 @@
 		<Folder Include="Services\BackgroundJobs\JobSchedules\" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<None Update="Services\Email\Templates\*.html">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
 </Project>

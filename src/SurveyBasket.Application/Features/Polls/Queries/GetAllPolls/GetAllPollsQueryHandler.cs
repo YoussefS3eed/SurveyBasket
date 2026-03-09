@@ -5,11 +5,11 @@ using SurveyBasket.Domain.Interfaces.Repositories;
 namespace SurveyBasket.Application.Features.Polls.Queries.GetAllPolls;
 
 public class GetAllPollsQueryHandler(IPollRepository pollRepository)
-    : IRequestHandler<GetAllPollsQuery, Result<IEnumerable<PollDto>>>
+    : IRequestHandler<GetAllPollsQuery, Result<IEnumerable<PollResponse>>>
 {
-    public async Task<Result<IEnumerable<PollDto>>> Handle(GetAllPollsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<PollResponse>>> Handle(GetAllPollsQuery request, CancellationToken cancellationToken)
     {
         var polls = await pollRepository.GetAllAsync(cancellationToken);
-        return Result.Success(polls.Adapt<IEnumerable<PollDto>>());
+        return Result.Success(polls.Adapt<IEnumerable<PollResponse>>());
     }
 }

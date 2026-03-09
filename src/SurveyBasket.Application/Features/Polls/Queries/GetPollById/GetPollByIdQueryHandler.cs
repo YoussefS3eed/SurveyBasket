@@ -5,15 +5,15 @@ using SurveyBasket.Domain.Interfaces.Repositories;
 namespace SurveyBasket.Application.Features.Polls.Queries.GetPollById;
 
 public class GetPollByIdQueryHandler(IPollRepository pollRepository)
-    : IRequestHandler<GetPollByIdQuery, Result<PollDto>>
+    : IRequestHandler<GetPollByIdQuery, Result<PollResponse>>
 {
-    public async Task<Result<PollDto>> Handle(GetPollByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PollResponse>> Handle(GetPollByIdQuery request, CancellationToken cancellationToken)
     {
         var poll = await pollRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (poll is null)
-            return Result.Failure<PollDto>(PollErrors.NotFound(request.Id));
+            return Result.Failure<PollResponse>(PollErrors.NotFound(request.Id));
 
-        return Result.Success(poll.Adapt<PollDto>());
+        return Result.Success(poll.Adapt<PollResponse>());
     }
 }

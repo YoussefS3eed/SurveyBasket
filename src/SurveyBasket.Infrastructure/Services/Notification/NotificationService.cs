@@ -7,7 +7,7 @@ internal sealed class NotificationService(
     IEmailService emailService,
     IApplicationUrlService urlService) : INotificationService
 {
-    public async Task SendNewPollsNotificationAsync(int? pollId = null, CancellationToken ct = default)
+    public async Task SendNewPollsNotification(int? pollId = null, CancellationToken ct = default)
     {
         var polls = await notificationRepository.GetPollsForNotificationAsync(pollId, ct);
         var users = await notificationRepository.GetUsersForNotificationAsync(ct);

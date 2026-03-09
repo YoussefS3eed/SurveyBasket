@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.Application.Features.Polls.Dtos;
 
-public record PollDto(
+public record PollResponse(
     int Id,
     string Title,
     string Summary,
