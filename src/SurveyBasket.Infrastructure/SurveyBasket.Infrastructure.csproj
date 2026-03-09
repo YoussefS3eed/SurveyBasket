@@ -7,10 +7,19 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Include="Services\Email\Templates\EmailConfirmation.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\SurveyBasket.Application\SurveyBasket.Application.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Hangfire.AspNetCore" Version="1.8.23" />
+		<PackageReference Include="Hangfire.Core" Version="1.8.23" />
+		<PackageReference Include="Hangfire.SqlServer" Version="1.8.23" />
 		<PackageReference Include="MailKit" Version="4.15.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.3" />
@@ -25,9 +34,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Migrations\" />
-		<Folder Include="SP\" />
-		<Folder Include="Seeders\" />
+		<Folder Include="Persistence\Migrations\" />
+		<Folder Include="Persistence\SP\" />
+		<Folder Include="Persistence\Seeders\" />
+		<Folder Include="Services\BackgroundJobs\JobSchedules\" />
 	</ItemGroup>
 
 </Project>

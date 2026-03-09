@@ -1,4 +1,4 @@
-﻿using SurveyBasket.Domain.Entities.Base;
+﻿using SurveyBasket.Domain.Common.BaseEntities;
 
 namespace SurveyBasket.Domain.Entities;
 

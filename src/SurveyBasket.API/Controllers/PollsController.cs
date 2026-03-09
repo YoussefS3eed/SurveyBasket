@@ -1,76 +1,68 @@
-﻿using SurveyBasket.Application.Polls.Commands.CreatePoll;
-using SurveyBasket.Application.Polls.Commands.DeletePoll;
-using SurveyBasket.Application.Polls.Commands.TogglePollPublish;
-using SurveyBasket.Application.Polls.Commands.UpdatePoll;
-using SurveyBasket.Application.Polls.Dtos;
-using SurveyBasket.Application.Polls.Queries.GetAllPolls;
-using SurveyBasket.Application.Polls.Queries.GetCurrentPolls;
-using SurveyBasket.Application.Polls.Queries.GetPollById;
+﻿using SurveyBasket.Application.Features.Polls.Commands.CreatePoll;
+using SurveyBasket.Application.Features.Polls.Commands.DeletePoll;
+using SurveyBasket.Application.Features.Polls.Commands.TogglePollPublish;
+using SurveyBasket.Application.Features.Polls.Commands.UpdatePoll;
+using SurveyBasket.Application.Features.Polls.Queries.GetAllPolls;
+using SurveyBasket.Application.Features.Polls.Queries.GetCurrentPolls;
+using SurveyBasket.Application.Features.Polls.Queries.GetPollById;
 
 namespace SurveyBasket.API.Controllers;
 
-
+[ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class PollsController(ISender sender) : ApiController
+public class PollsController(ISender sender) : ControllerBase
 {
     [HttpGet("")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        var query = new GetAllPollsQuery();
-        var result = await sender.Send(query, cancellationToken);
-        return HandleResult(result);
+        return (await sender.Send(new GetAllPollsQuery(), cancellationToken))
+            .ToActionResult(this);
     }
 
     [HttpGet("current")]
     public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
     {
-        var query = new GetCurrentPollsQuery();
-        var result = await sender.Send(query, cancellationToken);
-        return HandleResult(result);
+        return (await sender.Send(new GetCurrentPollsQuery(), cancellationToken))
+            .ToActionResult(this);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
     {
-        var query = new GetPollByIdQuery(id);
-        var result = await sender.Send(query, cancellationToken);
-        return HandleResult(result);
+        return (await sender.Send(new GetPollByIdQuery(id), cancellationToken))
+            .ToActionResult(this);
     }
 
     [HttpPost("")]
-    public async Task<IActionResult> Create([FromBody] CreatePollRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreatePollCommand command, CancellationToken cancellationToken)
     {
-        var command = request.Adapt<CreatePollCommand>();
         var result = await sender.Send(command, cancellationToken);
 
         if (result.IsFailure)
-            return HandleResult(result);
+            return result.ToActionResult(this);
 
         return CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdatePollRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdatePollCommand command, CancellationToken cancellationToken)
     {
-        var command = request.Adapt<UpdatePollCommand>() with { Id = id };
-        var result = await sender.Send(command, cancellationToken);
-        return HandleResult(result);
+        return (await sender.Send(command with { Id = id }, cancellationToken))
+            .ToActionResult(this);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        var command = new DeletePollCommand(id);
-        var result = await sender.Send(command, cancellationToken);
-        return HandleResult(result);
+        return (await sender.Send(new DeletePollCommand(id), cancellationToken))
+            .ToActionResult(this);
     }
 
     [HttpPut("{id}/togglePublish")]
     public async Task<IActionResult> TogglePublish(int id, CancellationToken cancellationToken)
     {
-        var command = new TogglePollPublishCommand(id);
-        var result = await sender.Send(command, cancellationToken);
-        return HandleResult(result);
+        return (await sender.Send(new TogglePollPublishCommand(id), cancellationToken))
+            .ToActionResult(this);
     }
 }

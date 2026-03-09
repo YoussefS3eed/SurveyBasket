@@ -1,62 +1,55 @@
-﻿using SurveyBasket.Application.Authentication.Commands.ConfirmEmail;
-using SurveyBasket.Application.Authentication.Commands.Login;
-using SurveyBasket.Application.Authentication.Commands.RefreshToken;
-using SurveyBasket.Application.Authentication.Commands.Register;
-using SurveyBasket.Application.Authentication.Commands.ResendConfirmationEmail;
-using SurveyBasket.Application.Authentication.Commands.RevokeRefreshToken;
-using SurveyBasket.Application.Authentication.Dtos;
+﻿using SurveyBasket.Application.Features.Authentication.Commands.ConfirmEmail;
+using SurveyBasket.Application.Features.Authentication.Commands.Login;
+using SurveyBasket.Application.Features.Authentication.Commands.RefreshToken;
+using SurveyBasket.Application.Features.Authentication.Commands.Register;
+using SurveyBasket.Application.Features.Authentication.Commands.ResendConfirmationEmail;
+using SurveyBasket.Application.Features.Authentication.Commands.RevokeRefreshToken;
 
 namespace SurveyBasket.API.Controllers;
 
-
+[ApiController]
 [Route("[controller]")]
-public class AuthController(ISender sender) : ApiController
+public class AuthController(ISender sender) : ControllerBase
 {
     [HttpPost("")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Login([FromBody] LoginCommand command, CancellationToken cancellationToken)
     {
-        var command = request.Adapt<LoginCommand>();
-        var result = await sender.Send(command, cancellationToken);
-        return HandleResult(result, 200);
+        return (await sender.Send(command, cancellationToken))
+            .ToActionResult(this, 200);
     }
 
-    [HttpPut("")]
-    public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
+    [HttpPut("refresh-token")]
+    public async Task<IActionResult> Refresh([FromBody] RefreshTokenCommand command, CancellationToken cancellationToken)
     {
-        var command = request.Adapt<RefreshTokenCommand>();
-        var result = await sender.Send(command, cancellationToken);
-        return HandleResult(result, 200);
+        return (await sender.Send(command, cancellationToken))
+            .ToActionResult(this, 200);
     }
 
     [HttpPost("revoke-refresh-token")]
-    public async Task<IActionResult> RevokeRefreshToken([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> RevokeRefreshToken([FromBody] RevokeRefreshTokenCommand command, CancellationToken cancellationToken)
     {
-        var command = request.Adapt<RevokeRefreshTokenCommand>();
-        var result = await sender.Send(command, cancellationToken);
-        return HandleResult(result, 204);
+        return (await sender.Send(command, cancellationToken))
+            .ToActionResult(this, 204);
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Register([FromBody] RegisterCommand command, CancellationToken cancellationToken)
     {
-        var command = request.Adapt<RegisterCommand>();
-        var result = await sender.Send(command, cancellationToken);
-        return HandleResult(result);
+        return (await sender.Send(command, cancellationToken))
+            .ToActionResult(this);
     }
 
     [HttpPost("confirm-email")]
-    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailCommand command, CancellationToken cancellationToken)
     {
-        var command = request.Adapt<ConfirmEmailCommand>();
-        var result = await sender.Send(command, cancellationToken);
-        return HandleResult(result, 200);
+        return (await sender.Send(command, cancellationToken))
+            .ToActionResult(this, 200);
     }
 
     [HttpPost("resend-confirmation")]
-    public async Task<IActionResult> ResendConfirmation([FromBody] ResendConfirmationEmailRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> ResendConfirmation([FromBody] ResendConfirmationEmailCommand command, CancellationToken cancellationToken)
     {
-        var command = request.Adapt<ResendConfirmationEmailCommand>();
-        var result = await sender.Send(command, cancellationToken);
-        return HandleResult(result, 200);
+        return (await sender.Send(command, cancellationToken))
+            .ToActionResult(this, 200);
     }
 }

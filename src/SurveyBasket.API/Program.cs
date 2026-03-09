@@ -1,21 +1,21 @@
+using Hangfire;
+using Hangfire.Dashboard;
 using Serilog;
-using SurveyBasket.API.Extensions;
 using SurveyBasket.API.Middleware;
-using SurveyBasket.Application.Extensions;
-using SurveyBasket.Infrastructure.Extensions;
+using SurveyBasket.Application.Common.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
-builder.Services.AddAPI(builder.Configuration);
-builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddDependencies(builder.Configuration);
 
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration)
 );
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 // Configure pipeline
 if (app.Environment.IsDevelopment())
@@ -31,13 +31,26 @@ app.UseHttpsRedirection();
 app.UseCors();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-//app.UseMiddleware<RequestTimeLoggingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-//app.MapIdentityApi<ApplicationUser>();
+app.UseHangfireDashboard("/jobs", new DashboardOptions
+{
+    Authorization = [new LocalRequestsOnlyAuthorizationFilter()],
+    DashboardTitle = "Survey Basket Dashboard"
+});
 
 app.MapControllers();
+
+RecurringJob.AddOrUpdate<INotificationService>(
+    "SendNewPollsNotification",
+    svc => svc.SendNewPollsNotificationAsync(null, default),
+    Cron.Daily);
+
+
+
+//app.MapIdentityApi<ApplicationUser>();
+
 
 app.Run();

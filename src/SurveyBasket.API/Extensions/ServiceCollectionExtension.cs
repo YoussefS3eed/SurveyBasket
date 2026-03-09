@@ -1,12 +1,16 @@
-using SurveyBasket.API.Middleware;
+using SurveyBasket.Application;
+using SurveyBasket.Infrastructure;
 
 namespace SurveyBasket.API.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddAPI(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddDependencies(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllers();
+
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
 
         services.AddCors(options =>
             options.AddDefaultPolicy(builder =>
@@ -17,10 +21,14 @@ public static class ServiceCollectionExtensions
             )
         );
 
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        //services.AddExceptionHandler<GlobalExceptionHandler>();
+        services.AddProblemDetails();
 
-        services.AddScoped<RequestTimeLoggingMiddleware>();
+        // // Application + Infrastructure layers
+        services.AddApplication();           // MediatR, Validators, Mapster
+        services.AddInfrastructure(configuration);  // DB, Identity, Repos, Hangfire
+
+        //services.AddScoped<RequestTimeLoggingMiddleware>();
 
         //builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
         //    .AddEntityFrameworkStores<ApplicationDbContext>();

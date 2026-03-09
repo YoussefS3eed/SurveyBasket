@@ -1,8 +1,4 @@
-﻿using FluentValidation;
-using SurveyBasket.Domain.Exceptions;
-using System.Text.Json;
-
-namespace SurveyBasket.API.Middleware;
+﻿namespace SurveyBasket.API.Middleware;
 
 public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
 {
@@ -14,7 +10,8 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An unhandled exception occurred.");
+            logger.LogError(ex, "Unhandled exception for request {Method} {Path}",
+                context.Request.Method, context.Request.Path);
             await HandleExceptionAsync(context, ex);
         }
     }
@@ -22,40 +19,17 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
     private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
         var problemDetails = new ProblemDetails
         {
             Status = StatusCodes.Status500InternalServerError,
-            Title = "Internal Server Error"
+            Title = "Internal Server Error",
+            Detail = "An unexpected error occurred. Please try again later.",
+            Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+            Extensions = { ["traceId"] = context.TraceIdentifier }
         };
 
-        switch (exception)
-        {
-            case NotFoundException notFound:
-                problemDetails.Status = StatusCodes.Status404NotFound;
-                problemDetails.Title = "Resource Not Found";
-                problemDetails.Detail = notFound.Message;
-                break;
-            case BadRequestException badRequest:
-                problemDetails.Status = StatusCodes.Status400BadRequest;
-                problemDetails.Title = "Bad Request";
-                problemDetails.Detail = badRequest.Message;
-                break;
-            case UnauthorizedException unauthorized:
-                problemDetails.Status = StatusCodes.Status401Unauthorized;
-                problemDetails.Title = "Unauthorized";
-                problemDetails.Detail = unauthorized.Message;
-                break;
-            case ValidationException validationEx:
-                problemDetails.Status = StatusCodes.Status400BadRequest;
-                problemDetails.Title = "Validation Failed";
-                problemDetails.Extensions["errors"] = validationEx.Errors
-                    .GroupBy(e => e.PropertyName)
-                    .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
-                break;
-        }
-
-        context.Response.StatusCode = problemDetails.Status.Value;
-        await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails));
+        await context.Response.WriteAsJsonAsync(problemDetails);
     }
 }

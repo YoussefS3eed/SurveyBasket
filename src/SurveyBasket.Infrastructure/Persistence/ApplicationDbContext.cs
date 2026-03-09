@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using SurveyBasket.Domain.Entities.Base;
+using SurveyBasket.Domain.Common.BaseEntities;
 using System.Reflection;
 using System.Security.Claims;
 
