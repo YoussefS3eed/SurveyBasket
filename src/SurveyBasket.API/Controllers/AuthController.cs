@@ -1,8 +1,10 @@
 ﻿using SurveyBasket.Application.Features.Authentication.Commands.ConfirmEmail;
+using SurveyBasket.Application.Features.Authentication.Commands.ForgetPassword;
 using SurveyBasket.Application.Features.Authentication.Commands.Login;
 using SurveyBasket.Application.Features.Authentication.Commands.RefreshToken;
 using SurveyBasket.Application.Features.Authentication.Commands.Register;
 using SurveyBasket.Application.Features.Authentication.Commands.ResendConfirmationEmail;
+using SurveyBasket.Application.Features.Authentication.Commands.ResetPassword;
 using SurveyBasket.Application.Features.Authentication.Commands.RevokeRefreshToken;
 
 namespace SurveyBasket.API.Controllers;
@@ -48,6 +50,24 @@ public class AuthController(ISender sender) : ControllerBase
 
     [HttpPost("resend-confirmation")]
     public async Task<IActionResult> ResendConfirmation([FromBody] ResendConfirmationEmailCommand command, CancellationToken cancellationToken)
+    {
+        return (await sender.Send(command, cancellationToken))
+            .ToActionResult(this, 200);
+    }
+
+    [HttpPost("forget-password")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordCommand command,CancellationToken cancellationToken)
+    {
+        return (await sender.Send(command, cancellationToken))
+            .ToActionResult(this,200);
+    }
+
+    [HttpPost("reset-password")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command, CancellationToken cancellationToken)
     {
         return (await sender.Send(command, cancellationToken))
             .ToActionResult(this, 200);

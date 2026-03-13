@@ -1,5 +1,4 @@
 using Hangfire;
-using Hangfire.Dashboard;
 using HangfireBasicAuthenticationFilter;
 using Serilog;
 using SurveyBasket.API.Middleware;
@@ -18,7 +17,6 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 
-// Configure pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

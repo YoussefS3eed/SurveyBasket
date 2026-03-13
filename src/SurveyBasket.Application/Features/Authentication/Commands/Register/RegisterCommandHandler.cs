@@ -47,7 +47,8 @@ internal sealed class RegisterCommandHandler(
         var confirmationLink =
             $"{origin}/auth/emailConfirmation?userId={user.Id}&code={code}";
 
-        backgroundJobService.Enqueue<IEmailService>(emailService => emailService.SendConfirmationEmailAsync(user.Email!, user.FullName, confirmationLink, cancellationToken));
+        backgroundJobService.Enqueue<IEmailService>(emailService =>
+            emailService.SendConfirmationEmailAsync(user.Email!, user.FullName, confirmationLink, cancellationToken));
 
         return Result.Success();
     }

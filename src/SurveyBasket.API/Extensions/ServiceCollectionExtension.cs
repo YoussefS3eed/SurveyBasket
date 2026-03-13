@@ -25,8 +25,8 @@ public static class ServiceCollectionExtensions
         services.AddProblemDetails();
 
         // // Application + Infrastructure layers
-        services.AddApplication();           // MediatR, Validators, Mapster
-        services.AddInfrastructure(configuration);  // DB, Identity, Repos, Hangfire
+        services.AddApplication();
+        services.AddInfrastructure(configuration);
 
         //services.AddScoped<RequestTimeLoggingMiddleware>();
 

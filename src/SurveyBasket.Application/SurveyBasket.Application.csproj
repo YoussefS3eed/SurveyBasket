@@ -22,6 +22,7 @@
 	  <Folder Include="Features\Answers\Queries\" />
 	  <Folder Include="Features\Authentication\Queries\" />
 	  <Folder Include="Features\Results\Commands\" />
+	  <Folder Include="Features\Users\Dtos\" />
 	</ItemGroup>
 
 </Project>

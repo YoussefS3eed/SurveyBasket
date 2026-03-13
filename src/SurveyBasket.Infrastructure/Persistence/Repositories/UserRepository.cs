@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Mapster;
+using Microsoft.AspNetCore.Identity;
+using SurveyBasket.Domain.Common.Dtos;
 using SurveyBasket.Domain.Common.Models;
 using SurveyBasket.Domain.Errors;
 
@@ -7,10 +9,16 @@ namespace SurveyBasket.Infrastructure.Persistence.Repositories;
 internal sealed class UserRepository(
     UserManager<ApplicationUser> userManager) : IUserRepository
 {
-    // ── Queries ──────────────────────────────────────────────────────
+    // Queries
 
     public async Task<ApplicationUser?> GetByIdAsync(string id, CancellationToken ct = default)
         => await userManager.FindByIdAsync(id);
+
+    public async Task<UserProfileDto> GetUserProfileByIdAsync(string id, CancellationToken ct = default)
+        => await userManager.Users
+            .Where(x => x.Id == id)
+            .ProjectToType<UserProfileDto>()
+            .FirstAsync(ct);
 
     public async Task<ApplicationUser?> GetByEmailAsync(string email, CancellationToken ct = default)
         => await userManager.FindByEmailAsync(email);
@@ -34,7 +42,7 @@ internal sealed class UserRepository(
     public async Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
         => await userManager.CheckPasswordAsync(user, password);
 
-    // ── Commands — all wrap IdentityResult into Result ─────────────
+    // Commands — all wrap IdentityResult into Result
 
     public async Task<Result> CreateAsync(ApplicationUser user, string password)
     {
@@ -54,7 +62,7 @@ internal sealed class UserRepository(
         return ToResult(identityResult);
     }
 
-    // ── Token generation ──────────────────────────────────────────
+    // Token generation
 
     public async Task<string> GenerateEmailConfirmationTokenAsync(ApplicationUser user)
         => await userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -62,12 +70,34 @@ internal sealed class UserRepository(
     public async Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user)
         => await userManager.GeneratePasswordResetTokenAsync(user);
 
-    // ── Private helpers ───────────────────────────────────────────
+    // Profile Management 
 
-    /// <summary>
-    /// Converts IdentityResult to Result.
-    /// All Identity error handling is contained here — never leaks to Application.
-    /// </summary>
+    public async Task UpdateProfileAsync(string userId, string firstname, string lastName)
+    {
+        await userManager.Users.Where(x => x.Id == userId)
+            .ExecuteUpdateAsync(setters =>
+                setters
+                    .SetProperty(x => x.FirstName, firstname)
+                    .SetProperty(x => x.LastName, lastName)
+            );
+
+    }
+
+    // Password Management
+
+    public async Task<Result> ChangePasswordAsync(ApplicationUser user, string currentPassword, string newPassword)
+    {
+        var identityResult = await userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+        return ToResult(identityResult);
+    }
+
+    public async Task<Result> ResetPasswordAsync(ApplicationUser user, string token, string newPassword)
+    {
+        var identityResult = await userManager.ResetPasswordAsync(user, token, newPassword);
+        return ToResult(identityResult);
+    }
+
+    // Private helpers
     private static Result ToResult(IdentityResult identityResult)
     {
         if (identityResult.Succeeded)

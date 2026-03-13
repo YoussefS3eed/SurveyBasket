@@ -28,14 +28,14 @@ internal sealed class EmailService(
 
     public async Task SendPasswordResetEmailAsync(string toEmail, string displayName, string resetLink, CancellationToken ct = default)
     {
-        var body = EmailBodyBuilder.GenerateEmailBody("PasswordReset",
+        var body = EmailBodyBuilder.GenerateEmailBody("ForgetPassword",
             new Dictionary<string, string>
             {
                 { "{{name}}",       displayName },
                 { "{{action_url}}", resetLink   }
             });
 
-        await SendAsync(toEmail, "🔐 Survey Basket: Password Reset", body, ct);
+        await SendAsync(toEmail, "🔐 Survey Basket: Change Password", body, ct);
     }
 
     public async Task SendPollNotificationAsync(string toEmail, string displayName, string pollTitle, string pollUrl,
