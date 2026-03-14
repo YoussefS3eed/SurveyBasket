@@ -1,13 +1,12 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using SurveyBasket.Application.Common.Interfaces;
 using SurveyBasket.Domain.Common.BaseEntities;
 using System.Reflection;
-using System.Security.Claims;
 
 namespace SurveyBasket.Infrastructure.Persistence;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor)
-    : IdentityDbContext<ApplicationUser>(options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ICurrentUserService currentUser)
+    : IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)
 {
     public DbSet<Answer> Answers { get; set; }
     public DbSet<Poll> Polls { get; set; }
@@ -37,7 +36,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         foreach (var entityEntry in entries)
         {
-            var currentUserId = httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var currentUserId = currentUser.Id!;
 
             if (entityEntry.State == EntityState.Added)
             {

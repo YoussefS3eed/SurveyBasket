@@ -3,4 +3,4 @@ using SurveyBasket.Domain.Common.Models;
 
 namespace SurveyBasket.Application.Features.Questions.Commands.CreateQuestion;
 
-public record CreateQuestionCommand(int PollId, string Content, List<string> Answers) : IRequest<Result<QuestionResponse>>;
+public record CreateQuestionCommand(int PollId, string Content, IEnumerable<string> Answers) : IRequest<Result<QuestionResponse>>;

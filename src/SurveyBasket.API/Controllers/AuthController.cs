@@ -58,10 +58,10 @@ public class AuthController(ISender sender) : ControllerBase
     [HttpPost("forget-password")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordCommand command,CancellationToken cancellationToken)
+    public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordCommand command, CancellationToken cancellationToken)
     {
         return (await sender.Send(command, cancellationToken))
-            .ToActionResult(this,200);
+            .ToActionResult(this, 200);
     }
 
     [HttpPost("reset-password")]

@@ -6,7 +6,7 @@ namespace SurveyBasket.API.Controllers;
 
 [ApiController]
 [Route("api/polls/{pollId}/[controller]")]
-[Authorize]
+[HasPermission(Permissions.Results)]
 public class ResultsController(ISender sender) : ControllerBase
 {
     [HttpGet("raw-data")]

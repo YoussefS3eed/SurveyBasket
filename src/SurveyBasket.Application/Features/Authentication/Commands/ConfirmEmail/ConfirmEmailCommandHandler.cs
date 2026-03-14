@@ -1,4 +1,5 @@
-﻿using SurveyBasket.Application.Common.Extensions;
+﻿using SurveyBasket.Application.Common.Contracts;
+using SurveyBasket.Application.Common.Extensions;
 using SurveyBasket.Domain.Common.Models;
 using SurveyBasket.Domain.Interfaces.Repositories;
 
@@ -28,9 +29,14 @@ internal sealed class ConfirmEmailCommandHandler(IUserRepository userRepository)
             return UserErrors.InvalidCode;
         }
 
-        // ✅ Returns Result — no IdentityResult in handler
         var result = await userRepository.ConfirmEmailAsync(user, code);
 
-        return result; // implicit: if failure, carries the error
+        if (result.IsFailure)
+            return result;
+
+        // Assign Member role after successful email confirmation
+        await userRepository.AddToRoleAsync(user, DefaultRoles.Member);
+
+        return result;
     }
 }

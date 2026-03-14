@@ -25,10 +25,10 @@ internal sealed class UpdateQuestionCommandHandler(
         if (question is null)
             return Result.Failure(QuestionErrors.NotFound());
 
-        var duplicate = await questionRepository.ExistsByContentExceptIdAsync(
+        var isDuplicate = await questionRepository.ExistsByContentExceptIdAsync(
             request.PollId, request.Content, request.Id, cancellationToken);
 
-        if (duplicate)
+        if (isDuplicate)
             return Result.Failure(QuestionErrors.DuplicatedQuestionContent);
 
         question.Content = request.Content;

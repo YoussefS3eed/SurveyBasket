@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using SurveyBasket.Application.Common.Caching;
 using SurveyBasket.Application.Common.Interfaces;
 using SurveyBasket.Domain.Interfaces;
+using SurveyBasket.Infrastructure.Authorization;
 using SurveyBasket.Infrastructure.Configurations;
 using SurveyBasket.Infrastructure.Persistence;
 using SurveyBasket.Infrastructure.Persistence.Repositories;
@@ -30,25 +32,6 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
 
-        // Identity
-        services.AddIdentity<ApplicationUser, IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
-
-        services.Configure<IdentityOptions>(options =>
-        {
-            options.Password.RequiredLength = 8;
-
-            options.SignIn.RequireConfirmedEmail = true;
-
-            options.User.AllowedUserNameCharacters =
-            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
-            options.User.RequireUniqueEmail = true;
-        });
-
-        // Auth / JWT 
-        services.AddAuthConfig(configuration);
-
         // Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -60,11 +43,36 @@ public static class DependencyInjection
         services.AddScoped<IResultRepository, ResultRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
 
+
+        // Identity
+        services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+        {
+            options.Password.RequiredLength = 8;
+
+            options.SignIn.RequireConfirmedEmail = true;
+
+            options.User.AllowedUserNameCharacters =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
+
+        // Http Context
+        services.AddHttpContextAccessor();
+
         // Services
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IApplicationUrlService, ApplicationUrlService>();
+
+        // Authorization
+        services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
+
+        // Auth / JWT 
+        services.AddAuthConfig(configuration);
 
         // Mail Settings
         services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
@@ -74,9 +82,6 @@ public static class DependencyInjection
 
         // Hangfire 
         services.AddBackgroundJobs(configuration);
-
-        // Http Context
-        services.AddHttpContextAccessor();
 
         return services;
     }
@@ -108,7 +113,8 @@ public static class DependencyInjection
                 ValidateLifetime = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings?.Key!)),
                 ValidIssuer = jwtSettings?.Issuer,
-                ValidAudience = jwtSettings?.Audience
+                ValidAudience = jwtSettings?.Audience,
+                ClockSkew = TimeSpan.Zero
             };
         });
         return services;

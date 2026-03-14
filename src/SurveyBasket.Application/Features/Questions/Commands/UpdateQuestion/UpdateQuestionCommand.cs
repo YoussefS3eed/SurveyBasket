@@ -3,4 +3,4 @@ using SurveyBasket.Domain.Common.Models;
 
 namespace SurveyBasket.Application.Features.Questions.Commands.UpdateQuestion;
 
-public record UpdateQuestionCommand(int PollId, int Id, string Content, List<string> Answers) : IRequest<Result>;
+public record UpdateQuestionCommand(int PollId, int Id, string Content, IEnumerable<string> Answers) : IRequest<Result>;

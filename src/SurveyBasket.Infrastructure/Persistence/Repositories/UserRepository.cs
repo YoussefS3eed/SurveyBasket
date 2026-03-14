@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Identity;
+using SurveyBasket.Application.Common.Contracts;
 using SurveyBasket.Domain.Common.Dtos;
 using SurveyBasket.Domain.Common.Models;
 using SurveyBasket.Domain.Errors;
@@ -7,7 +8,8 @@ using SurveyBasket.Domain.Errors;
 namespace SurveyBasket.Infrastructure.Persistence.Repositories;
 
 internal sealed class UserRepository(
-    UserManager<ApplicationUser> userManager) : IUserRepository
+    UserManager<ApplicationUser> userManager,
+    ApplicationDbContext context) : IUserRepository
 {
     // Queries
 
@@ -80,7 +82,6 @@ internal sealed class UserRepository(
                     .SetProperty(x => x.FirstName, firstname)
                     .SetProperty(x => x.LastName, lastName)
             );
-
     }
 
     // Password Management
@@ -96,6 +97,25 @@ internal sealed class UserRepository(
         var identityResult = await userManager.ResetPasswordAsync(user, token, newPassword);
         return ToResult(identityResult);
     }
+
+    // Roles and Permissions
+
+    public async Task<(IEnumerable<string> roles, IEnumerable<string> permissions)> GetUserRolesAndPermissionsAsync(ApplicationUser user, CancellationToken ct = default)
+    {
+        var userRoles = await userManager.GetRolesAsync(user);
+
+        var userPermissions = await (
+            from r in context.Roles
+            join rc in context.RoleClaims on r.Id equals rc.RoleId
+            where userRoles.Contains(r.Name!) && rc.ClaimType == Permissions.Type
+            select rc.ClaimValue!)
+            .Distinct()
+            .ToListAsync(ct);
+        return (userRoles, userPermissions);
+    }
+
+    public async Task AddToRoleAsync(ApplicationUser user, string roleName) =>
+        await userManager.AddToRoleAsync(user, roleName);
 
     // Private helpers
     private static Result ToResult(IdentityResult identityResult)

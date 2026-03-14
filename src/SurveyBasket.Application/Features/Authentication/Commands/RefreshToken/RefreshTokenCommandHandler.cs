@@ -13,30 +13,29 @@ internal sealed class RefreshTokenCommandHandler(
     public async Task<Result<AuthResponse>> Handle(
         RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        // 1. Validate existing JWT to extract userId
+        // Validate existing JWT to extract userId
         var userId = jwtService.ValidateToken(request.Token);
         if (string.IsNullOrEmpty(userId))
             return UserErrors.InvalidJwtToken;
 
-        // 2. Load user
-        var user = await userRepository.GetByIdAsync(userId, cancellationToken);
-        if (user is null)
+        if (await userRepository.GetByIdAsync(userId, cancellationToken) is not { } user)
             return UserErrors.InvalidJwtToken;
 
-        // 3. Validate refresh token
+        // Validate refresh token && Revoke old token
         var storedToken = user.RefreshTokens
             .SingleOrDefault(rt => rt.Token == request.RefreshToken && rt.IsActive);
 
         if (storedToken is null)
             return UserErrors.InvalidRefreshToken;
 
-        // 4. Revoke old token
         storedToken.RevokedOn = DateTime.UtcNow;
 
-        // 5. Issue new tokens
-        // ✅ ToTokenRequest() — no Identity types in jwt call
+        // Get user roles and permissions
+        var (userRoles, userPermissions) = await userRepository.GetUserRolesAndPermissionsAsync(user, cancellationToken);
+
+        // Generate tokens with roles and permissions
         var (newToken, expiresIn, refreshTokenExpiryDays) =
-            jwtService.GenerateToken(user.ToTokenRequest());
+            jwtService.GenerateToken(user.ToTokenRequest(), userRoles, userPermissions);
 
         var newRefreshToken = jwtService.GenerateRefreshToken();
         var refreshExpiration = DateTime.UtcNow.AddDays(refreshTokenExpiryDays);
@@ -47,7 +46,6 @@ internal sealed class RefreshTokenCommandHandler(
             ExpiresOn = refreshExpiration
         });
 
-        // 6. Persist — Identity manages its own SaveChanges
         await userRepository.UpdateAsync(user);
 
         return Result.Success(new AuthResponse(

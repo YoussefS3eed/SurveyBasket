@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SurveyBasket.Application.Common.Interfaces;
 using SurveyBasket.Domain.Common.Dtos;
@@ -6,16 +7,18 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace SurveyBasket.Infrastructure.Services.Auth;
 
-internal sealed class JwtService(IOptions<JwtOptions> options) : IJwtService
+internal sealed class JwtService(IOptions<JwtOptions> options, ILogger<JwtService> logger) : IJwtService
 {
     private readonly JwtOptions _options = options.Value;
 
-    // ✅ Takes UserTokenRequest — no ApplicationUser, no Identity reference
     public (string token, int expiresIn, int refreshTokenExpiryDays) GenerateToken(
-        UserTokenRequest tokenRequest)
+        UserTokenRequest tokenRequest,
+        IEnumerable<string> roles,
+        IEnumerable<string> permissions)
     {
         Claim[] claims =
         [
@@ -23,7 +26,9 @@ internal sealed class JwtService(IOptions<JwtOptions> options) : IJwtService
             new(JwtRegisteredClaimNames.Email,       tokenRequest.Email),
             new(JwtRegisteredClaimNames.GivenName,  tokenRequest.FirstName),
             new(JwtRegisteredClaimNames.FamilyName, tokenRequest.LastName),
-            new(JwtRegisteredClaimNames.Jti,         Guid.NewGuid().ToString())
+            new(JwtRegisteredClaimNames.Jti,         Guid.NewGuid().ToString()),
+            new("roles", JsonSerializer.Serialize(roles), JsonClaimValueTypes.JsonArray),
+            new("permissions", JsonSerializer.Serialize(permissions), JsonClaimValueTypes.JsonArray)
         ];
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));
@@ -57,16 +62,20 @@ internal sealed class JwtService(IOptions<JwtOptions> options) : IJwtService
             {
                 IssuerSigningKey = key,
                 ValidateIssuerSigningKey = true,
-                ValidateIssuer = false,
-                ValidateAudience = false,
+                ValidateIssuer = true,
+                ValidIssuer = _options.Issuer,
+                ValidateAudience = true,
+                ValidAudience = _options.Audience,
+                ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
-            }, out SecurityToken validated);
+            }, out SecurityToken validatedToken);
 
-            return ((JwtSecurityToken)validated)
+            return ((JwtSecurityToken)validatedToken)
                 .Claims.First(c => c.Type == JwtRegisteredClaimNames.Sub).Value;
         }
-        catch
+        catch (SecurityTokenException ex)
         {
+            logger.LogWarning("Token validation failed: {Reason}", ex.Message);
             return null;
         }
     }

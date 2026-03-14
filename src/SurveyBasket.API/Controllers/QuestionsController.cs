@@ -12,6 +12,7 @@ namespace SurveyBasket.API.Controllers;
 public class QuestionsController(ISender sender) : ControllerBase
 {
     [HttpGet("")]
+    [HasPermission(Permissions.GetQuestions)]
     public async Task<IActionResult> GetAll([FromRoute] int pollId, CancellationToken cancellationToken)
     {
         return (await sender.Send(new GetQuestionsByPollIdQuery(pollId), cancellationToken))
@@ -19,6 +20,7 @@ public class QuestionsController(ISender sender) : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [HasPermission(Permissions.GetQuestions)]
     public async Task<IActionResult> Get([FromRoute] int pollId, [FromRoute] int id, CancellationToken cancellationToken)
     {
         return (await sender.Send(new GetQuestionByIdQuery(pollId, id), cancellationToken))
@@ -26,6 +28,7 @@ public class QuestionsController(ISender sender) : ControllerBase
     }
 
     [HttpPost("")]
+    [HasPermission(Permissions.AddQuestions)]
     public async Task<IActionResult> Create([FromRoute] int pollId, [FromBody] CreateQuestionCommand command, CancellationToken cancellationToken)
     {
         return (await sender.Send(command with { PollId = pollId }, cancellationToken))
@@ -33,6 +36,7 @@ public class QuestionsController(ISender sender) : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [HasPermission(Permissions.UpdateQuestions)]
     public async Task<IActionResult> Update([FromRoute] int pollId, [FromRoute] int id, [FromBody] UpdateQuestionCommand command, CancellationToken cancellationToken)
     {
         return (await sender.Send(command with { PollId = pollId, Id = id }, cancellationToken))
@@ -40,6 +44,7 @@ public class QuestionsController(ISender sender) : ControllerBase
     }
 
     [HttpPut("{id}/toggleStatus")]
+    [HasPermission(Permissions.UpdateQuestions)]
     public async Task<IActionResult> ToggleStatus([FromRoute] int pollId, [FromRoute] int id, CancellationToken cancellationToken)
     {
         return (await sender.Send(new ToggleQuestionStatusCommand(pollId, id), cancellationToken))

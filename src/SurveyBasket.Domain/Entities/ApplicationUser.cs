@@ -23,7 +23,7 @@ public sealed class ApplicationUser : IdentityUser
         Email = email
     };
 
-    // ✅ Converts to the JWT payload record without exposing Identity
+    // Converts to the JWT payload record without exposing Identity
     public UserTokenRequest ToTokenRequest() =>
         new(Id, Email!, FirstName, LastName);
 }

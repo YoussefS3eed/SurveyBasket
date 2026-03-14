@@ -13,32 +13,26 @@ internal sealed class LoginCommandHandler(
     public async Task<Result<AuthResponse>> Handle(
         LoginCommand request, CancellationToken cancellationToken)
     {
-        // 1. Find user
-        var user = await userRepository.GetByUserNameOrEmailAsync(
-            request.EmailOrUserName, cancellationToken);
-
-        if (user is null)
+        if (await userRepository.GetByUserNameOrEmailAsync(request.EmailOrUserName, cancellationToken) is not { } user)
             return UserErrors.InvalidCredentials;
 
-        // 2. Check password
-        var isValidPassword = await userRepository.CheckPasswordAsync(user, request.Password);
-        if (!isValidPassword)
+        if (!await userRepository.CheckPasswordAsync(user, request.Password))
             return UserErrors.InvalidCredentials;
 
-        // 3. Check email confirmation
-        var isEmailConfirmed = await userRepository.IsEmailConfirmedAsync(user);
-        if (!isEmailConfirmed)
+        if (!user.EmailConfirmed)
             return UserErrors.EmailNotConfirmed;
 
-        // 4. Generate tokens
-        // ✅ ToTokenRequest() — converts ApplicationUser to JWT payload record
+        // Get user roles and permissions
+        var (userRoles, userPermissions) = await userRepository.GetUserRolesAndPermissionsAsync(user, cancellationToken);
+
+        // Generate tokens with roles and permissions
         var (token, expiresIn, refreshTokenExpiryDays) =
-            jwtService.GenerateToken(user.ToTokenRequest());
+            jwtService.GenerateToken(user.ToTokenRequest(), userRoles, userPermissions);
 
         var refreshToken = jwtService.GenerateRefreshToken();
         var refreshTokenExpiration = DateTime.UtcNow.AddDays(refreshTokenExpiryDays);
 
-        // 5. Persist refresh token (Identity manages its own SaveChanges)
+        // Persist refresh token (Identity manages its own SaveChanges)
         user.RefreshTokens.Add(new Domain.Entities.RefreshToken
         {
             Token = refreshToken,
@@ -47,7 +41,6 @@ internal sealed class LoginCommandHandler(
 
         await userRepository.UpdateAsync(user);
 
-        // 6. Build response
         return Result.Success(new AuthResponse(
             user.Id,
             user.FirstName,

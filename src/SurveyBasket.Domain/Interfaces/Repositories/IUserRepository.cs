@@ -32,4 +32,9 @@ public interface IUserRepository
     // ── Password Management ────────────────────────────────────────────
     Task<Result> ChangePasswordAsync(ApplicationUser user, string currentPassword, string newPassword);
     Task<Result> ResetPasswordAsync(ApplicationUser user, string token, string newPassword);
+
+    // ── Roles and Permissions ─────────────────────────────────────────
+    Task<(IEnumerable<string> roles, IEnumerable<string> permissions)> GetUserRolesAndPermissionsAsync(ApplicationUser user, CancellationToken ct = default);
+    Task AddToRoleAsync(ApplicationUser user, string roleName);
+
 }

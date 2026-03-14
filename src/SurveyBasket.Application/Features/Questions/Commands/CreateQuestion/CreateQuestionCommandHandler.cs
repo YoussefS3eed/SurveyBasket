@@ -20,10 +20,10 @@ internal sealed class CreateQuestionCommandHandler(
         if (!pollExists)
             return Result.Failure<QuestionResponse>(PollErrors.NotFound(request.PollId));
 
-        var duplicate = await questionRepository.ExistsByContentExceptIdAsync(
+        var isDuplicate = await questionRepository.ExistsByContentExceptIdAsync(
             request.PollId, request.Content, null, cancellationToken);
 
-        if (duplicate)
+        if (isDuplicate)
             return Result.Failure<QuestionResponse>(QuestionErrors.DuplicatedQuestionContent);
 
         var question = new Question

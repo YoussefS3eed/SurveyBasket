@@ -1,4 +1,7 @@
-﻿namespace SurveyBasket.Infrastructure.Persistence.Configurations;
+﻿using Microsoft.AspNetCore.Identity;
+using SurveyBasket.Application.Common.Contracts;
+
+namespace SurveyBasket.Infrastructure.Persistence.Configurations;
 
 public class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
 {
@@ -17,6 +20,23 @@ public class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
             refreshToken.Property(rt => rt.CreatedOn).IsRequired();
             refreshToken.Property(rt => rt.RevokedOn);
             refreshToken.WithOwner().HasForeignKey("UserId");
+        });
+
+        var passwordHasher = new PasswordHasher<ApplicationUser>();
+
+        builder.HasData(new ApplicationUser
+        {
+            Id = DefaultUsers.AdminId,
+            FirstName = "Survey Basket",
+            LastName = "Admin",
+            UserName = DefaultUsers.AdminUserName,
+            NormalizedUserName = DefaultUsers.AdminUserName.ToUpper(),
+            Email = DefaultUsers.AdminEmail,
+            NormalizedEmail = DefaultUsers.AdminEmail.ToUpper(),
+            SecurityStamp = DefaultUsers.AdminSecurityStamp,
+            ConcurrencyStamp = DefaultUsers.AdminConcurrencyStamp,
+            EmailConfirmed = true,
+            PasswordHash = passwordHasher.HashPassword(null!, DefaultUsers.AdminPassword)
         });
     }
 }
