@@ -123,8 +123,10 @@ internal sealed class UserRepository(
         if (identityResult.Succeeded)
             return Result.Success();
 
-        var error = identityResult.Errors.First();
-        return Result.Failure(
-            Error.Validation($"Identity.{error.Code}", error.Description));
+        var errors = identityResult.Errors
+            .Select(e => new ValidationError(e.Code, e.Description))
+            .ToList();
+
+        return Result.Failure(Error.Validation(errors));
     }
 }

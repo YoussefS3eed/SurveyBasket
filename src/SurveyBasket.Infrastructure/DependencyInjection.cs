@@ -42,7 +42,7 @@ public static class DependencyInjection
         services.AddScoped<IVoteRepository, VoteRepository>();
         services.AddScoped<IResultRepository, ResultRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
-
+        services.AddScoped<IRoleRepository, RoleRepository>();
 
         // Identity
         services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
