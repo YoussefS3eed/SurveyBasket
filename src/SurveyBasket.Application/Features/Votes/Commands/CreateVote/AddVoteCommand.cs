@@ -1,5 +1,4 @@
 ﻿using SurveyBasket.Application.Features.Votes.Dtos;
-using SurveyBasket.Domain.Common.Models;
 
 namespace SurveyBasket.Application.Features.Votes.Commands.CreateVote;
 

@@ -1,5 +1,4 @@
-﻿using SurveyBasket.Domain.Common.Models;
-using SurveyBasket.Domain.Interfaces;
+﻿using SurveyBasket.Domain.Interfaces;
 using SurveyBasket.Domain.Interfaces.Repositories;
 
 namespace SurveyBasket.Application.Features.Polls.Commands.DeletePoll;

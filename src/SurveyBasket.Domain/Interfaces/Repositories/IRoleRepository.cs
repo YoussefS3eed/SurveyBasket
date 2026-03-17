@@ -12,4 +12,10 @@ public interface IRoleRepository
     Task<Result> AddAsync(ApplicationRole role, IEnumerable<string> permissions, CancellationToken ct = default);
     Task<Result> UpdateAsync(ApplicationRole role, IEnumerable<string> permissions, CancellationToken ct = default);
     Task ToggleStatusAsync(string id, CancellationToken ct = default);
+
+    // User Role Management
+    Task<IList<string>> GetUserRolesAsync(string userId, CancellationToken ct = default);
+    Task<IList<string>> GetDefaultRolesAsync(CancellationToken ct = default);
+    Task<Result> ReplaceUserRolesAsync(string userId, IList<string> newRoles, CancellationToken ct = default);
+    Task<Result> ResetUserToDefaultRoleAsync(string userId, CancellationToken ct = default);
 }

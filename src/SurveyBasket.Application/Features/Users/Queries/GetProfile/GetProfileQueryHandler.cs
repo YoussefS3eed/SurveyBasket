@@ -1,6 +1,5 @@
 using SurveyBasket.Application.Common.Interfaces;
 using SurveyBasket.Domain.Common.Dtos;
-using SurveyBasket.Domain.Common.Models;
 using SurveyBasket.Domain.Interfaces.Repositories;
 
 namespace SurveyBasket.Application.Features.Users.Queries.GetProfile;

@@ -1,5 +1,4 @@
 ﻿using SurveyBasket.Application.Common.Interfaces;
-using SurveyBasket.Domain.Common.Models;
 using SurveyBasket.Domain.Interfaces;
 using SurveyBasket.Domain.Interfaces.Repositories;
 

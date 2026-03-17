@@ -8,7 +8,13 @@ public static class UserErrors
             : Error.NotFound("User.NotFound", $"User with id '{key}' was not found.");
 
     public static readonly Error InvalidCredentials =
-        Error.Unauthorized("User.InvalidCredentials", "Invalid email or password.");
+        Error.Unauthorized("User.InvalidCredentials", "Invalid Email/Username or Password.");
+
+    public static readonly Error DisabledUser =
+        Error.Unauthorized("User.DisabledUser", "User account is disabled. Contact your administrator.");
+
+    public static readonly Error LockedUser =
+        Error.Unauthorized("User.LockedUser", "User account is locked. Contact your administrator.");
 
     public static readonly Error InvalidJwtToken =
         Error.Unauthorized("User.InvalidJwtToken", "Invalid access token.");
@@ -24,6 +30,9 @@ public static class UserErrors
 
     public static readonly Error DuplicatedConfirmation =
         Error.Validation("User.DuplicatedConfirmation", "Email is already confirmed.");
+
+    public static readonly Error InvalidRoles =
+        Error.Validation("User.InvalidRoles", "One or more roles are invalid.");
 
     // ✅ One canonical error per concept — no duplicates
     public static Error DuplicatedEmail(string? email = null) =>

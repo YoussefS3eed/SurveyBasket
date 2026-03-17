@@ -9,7 +9,7 @@ public class GetRoleByIdQueryHandler(IRoleRepository roleRepository)
     public async Task<Result<RoleDetailResponse>> Handle(GetRoleByIdQuery request, CancellationToken cancellationToken)
     {
         var role = await roleRepository.GetByIdAsync(request.Id, cancellationToken);
-        
+
         if (role is null)
             return Result.Failure<RoleDetailResponse>(RoleErrors.RoleNotFound(request.Id));
 

@@ -3,7 +3,7 @@ namespace SurveyBasket.Domain.Interfaces.Repositories;
 
 public interface IQuestionRepository
 {
-    Task<IEnumerable<Question>> GetByPollIdAsync(int pollId, CancellationToken ct = default);
+    Task<IQueryable<Question>> GetByPollIdAsync(int pollId, CancellationToken ct = default);
     //Task<IEnumerable<Question>> GetAvailableAsync(int pollId, string userId, CancellationToken cancellationToken = default);
     Task<Question?> GetByIdAsync(int pollId, int id, bool includeAnswers = true, CancellationToken ct = default);
     Task AddAsync(Question question, CancellationToken ct = default);

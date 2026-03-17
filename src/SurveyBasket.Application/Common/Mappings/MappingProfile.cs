@@ -1,5 +1,6 @@
 ﻿using SurveyBasket.Application.Features.Answers.Dtos;
 using SurveyBasket.Application.Features.Authentication.Commands.Register;
+using SurveyBasket.Application.Features.Questions.Dtos;
 using SurveyBasket.Application.Features.Results.Dtos;
 using SurveyBasket.Application.Features.Votes.Dtos;
 using SurveyBasket.Domain.Entities;
@@ -10,6 +11,8 @@ public class MappingProfile : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
+        config.NewConfig<Question, QuestionResponse>()
+            .Map(dest => dest.Answers, src => src.Answers.Adapt<IEnumerable<AnswerResponse>>());
 
         config.NewConfig<Question, AvailableQuestionResponse>()
             .Map(dest => dest.Answers, src => src.Answers.Where(a => a.IsActive).Adapt<IEnumerable<AnswerResponse>>());

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SurveyBasket.Application.Common.Extensions;
 using SurveyBasket.Application.Common.Interfaces;
-using SurveyBasket.Domain.Common.Models;
 using SurveyBasket.Domain.Entities;
 using SurveyBasket.Domain.Interfaces.Repositories;
 

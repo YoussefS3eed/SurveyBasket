@@ -1,5 +1,4 @@
 ﻿using SurveyBasket.Application.Features.Results.Dtos;
-using SurveyBasket.Domain.Common.Models;
 using SurveyBasket.Domain.Interfaces.Repositories;
 
 namespace SurveyBasket.Application.Features.Results.Queries.GetPollVotes;

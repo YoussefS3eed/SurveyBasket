@@ -346,6 +346,9 @@ namespace SurveyBasket.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("IsDisabled")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -405,16 +408,59 @@ namespace SurveyBasket.Infrastructure.Migrations
                             Email = "admin@survey-basket.com",
                             EmailConfirmed = true,
                             FirstName = "Survey Basket",
+                            IsDisabled = false,
                             LastName = "Admin",
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@SURVEY-BASKET.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGTDjl53lOa4qnmmD8mZwPvllnopZWLhVrLMgWYV0VwfV8GrTsyEKF0NCJG4CNKO/g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAR8j58/FfDjwiMZTAWfASuvRCmxY03FD9bMPfSdbfeVabrt+o5Z4GV3ij+M3Ncc2g==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "55BF92C9EF0249CDA210D85D1A851BC9",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
+                });
+
+            modelBuilder.Entity("SurveyBasket.Domain.Entities.EmailVerificationCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsUsed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("NewEmail")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("EmailVerificationCodes", (string)null);
                 });
 
             modelBuilder.Entity("SurveyBasket.Domain.Entities.Poll", b =>
@@ -670,6 +716,17 @@ namespace SurveyBasket.Infrastructure.Migrations
                         });
 
                     b.Navigation("RefreshTokens");
+                });
+
+            modelBuilder.Entity("SurveyBasket.Domain.Entities.EmailVerificationCode", b =>
+                {
+                    b.HasOne("SurveyBasket.Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SurveyBasket.Domain.Entities.Poll", b =>

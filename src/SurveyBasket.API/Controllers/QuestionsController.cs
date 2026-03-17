@@ -1,4 +1,5 @@
-﻿using SurveyBasket.Application.Features.Questions.Commands.CreateQuestion;
+﻿using SurveyBasket.Application.Common.Models;
+using SurveyBasket.Application.Features.Questions.Commands.CreateQuestion;
 using SurveyBasket.Application.Features.Questions.Commands.ToggleQuestionStatus;
 using SurveyBasket.Application.Features.Questions.Commands.UpdateQuestion;
 using SurveyBasket.Application.Features.Questions.Queries.GetQuestionById;
@@ -13,9 +14,9 @@ public class QuestionsController(ISender sender) : ControllerBase
 {
     [HttpGet("")]
     [HasPermission(Permissions.GetQuestions)]
-    public async Task<IActionResult> GetAll([FromRoute] int pollId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromRoute] int pollId, [FromQuery] RequestFilters filters, CancellationToken cancellationToken)
     {
-        return (await sender.Send(new GetQuestionsByPollIdQuery(pollId), cancellationToken))
+        return (await sender.Send(new GetQuestionsByPollIdQuery(pollId, filters), cancellationToken))
             .ToActionResult(this);
     }
 

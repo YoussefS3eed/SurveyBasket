@@ -55,6 +55,62 @@ internal sealed class EmailService(
         await SendAsync(toEmail, $"📣 Survey Basket: New Poll - {pollTitle}", body, ct);
     }
 
+    public async Task SendEmailVerificationCodeAsync(string toEmail, string displayName, string verificationCode, CancellationToken ct = default)
+    {
+        var body = EmailBodyBuilder.GenerateEmailBody("EmailVerificationCode",
+            new Dictionary<string, string>
+            {
+                { "{{name}}",           displayName     },
+                { "{{verification_code}}", verificationCode }
+            });
+
+        logger.LogInformation("Sendding email verification code to {Email} with code: {code}", toEmail, verificationCode);
+        await SendAsync(toEmail, $"🔒 Survey Basket: Email Verification", body, ct);
+    }
+
+    public async Task SendUserCreatedEmailAsync(string toEmail, string displayName, string username, string password, string confirmationLink, CancellationToken ct = default)
+    {
+        var body = EmailBodyBuilder.GenerateEmailBody("UserCreated",
+            new Dictionary<string, string>
+            {
+                { "{{name}}",       displayName     },
+                { "{{username}}",   username        },
+                { "{{password}}",   password        },
+                { "{{action_url}}", confirmationLink }
+            });
+
+        logger.LogInformation("Sending user created email to {Email} for user: {Username}", toEmail, username);
+        await SendAsync(toEmail, "🎉 Survey Basket: Welcome - Your Account Has Been Created", body, ct);
+    }
+
+    public async Task SendAdminEmailChangeConfirmationAsync(string toEmail, string displayName, string username, string temporaryPassword, string confirmEmailLink, CancellationToken ct = default)
+    {
+        var body = EmailBodyBuilder.GenerateEmailBody("AdminEmailChange",
+            new Dictionary<string, string>
+            {
+                { "{{name}}",           displayName     },
+                { "{{username}}",       username        },
+                { "{{temporary_password}}", temporaryPassword },
+                { "{{action_url}}",     confirmEmailLink }
+            });
+
+        logger.LogInformation("Sending admin email change confirmation to {Email} for user: {Username}", toEmail, username);
+        await SendAsync(toEmail, "🔐 Survey Basket: Email Changed - Please Verify", body, ct);
+    }
+
+    public async Task SendEmailConfirmationRequestAsync(string toEmail, string displayName, string confirmEmailLink, CancellationToken ct = default)
+    {
+        var body = EmailBodyBuilder.GenerateEmailBody("EmailConfirmation",
+            new Dictionary<string, string>
+            {
+                { "{{name}}",       displayName     },
+                { "{{action_url}}", confirmEmailLink }
+            });
+
+        logger.LogInformation("Sending email confirmation request to {Email}", toEmail);
+        await SendAsync(toEmail, "📧 Survey Basket: Please Confirm Your Email", body, ct);
+    }
+
     private async Task SendAsync(string toEmail, string subject, string htmlBody, CancellationToken ct = default)
     {
         var message = new MimeMessage

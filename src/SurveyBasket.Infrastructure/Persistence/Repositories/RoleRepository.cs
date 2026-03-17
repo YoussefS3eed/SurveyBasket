@@ -7,6 +7,7 @@ namespace SurveyBasket.Infrastructure.Persistence.Repositories;
 
 internal sealed class RoleRepository(
     RoleManager<ApplicationRole> roleManager,
+    UserManager<ApplicationUser> userManager,
     ApplicationDbContext context) : IRoleRepository
 {
     public async Task<IEnumerable<ApplicationRole>> GetAllAsync(bool includeDisabled, CancellationToken ct = default)
@@ -96,6 +97,92 @@ internal sealed class RoleRepository(
             role.IsDeleted = !role.IsDeleted;
             await roleManager.UpdateAsync(role);
         }
+    }
+
+    // User Role Management
+    public async Task<IList<string>> GetUserRolesAsync(string userId, CancellationToken ct = default)
+    {
+        var user = await userManager.FindByIdAsync(userId);
+        if (user is null)
+            return Array.Empty<string>();
+
+        return await userManager.GetRolesAsync(user);
+    }
+
+    public async Task<IList<string>> GetDefaultRolesAsync(CancellationToken ct = default)
+    {
+        return await roleManager.Roles
+            .Where(r => r.IsDefault && !r.IsDeleted)
+            .Select(r => r.Name!)
+            .ToListAsync(ct);
+    }
+
+    public async Task<Result> ReplaceUserRolesAsync(string userId, IList<string> newRoles, CancellationToken ct = default)
+    {
+        var user = await userManager.FindByIdAsync(userId);
+        if (user is null)
+            return Result.Failure(UserErrors.NotFound(userId));
+
+        // Get current roles and default roles
+        var currentRoles = await userManager.GetRolesAsync(user);
+        var defaultRoles = await GetDefaultRolesAsync(ct);
+
+        // Always keep default roles
+        var rolesToKeep = currentRoles.Intersect(defaultRoles).ToList();
+
+        // Determine roles to add and remove (excluding default roles)
+        var rolesToAdd = newRoles.Except(currentRoles).Except(defaultRoles).ToList();
+        var rolesToRemove = currentRoles.Where(r => !newRoles.Contains(r) && !defaultRoles.Contains(r)).ToList();
+
+        // Remove extra roles (non-default only)
+        if (rolesToRemove.Any())
+        {
+            var removeResult = await userManager.RemoveFromRolesAsync(user, rolesToRemove);
+            if (!removeResult.Succeeded)
+                return ToResult(removeResult);
+        }
+
+        // Add new roles (non-default only)
+        if (rolesToAdd.Any())
+        {
+            var addResult = await userManager.AddToRolesAsync(user, rolesToAdd);
+            if (!addResult.Succeeded)
+                return ToResult(addResult);
+        }
+
+        return Result.Success();
+    }
+
+    public async Task<Result> ResetUserToDefaultRoleAsync(string userId, CancellationToken ct = default)
+    {
+        var user = await userManager.FindByIdAsync(userId);
+        if (user is null)
+            return Result.Failure(UserErrors.NotFound(userId));
+
+        // Get default roles and current roles
+        var defaultRoles = await GetDefaultRolesAsync(ct);
+        var currentRoles = await userManager.GetRolesAsync(user);
+
+        // Remove all non-default roles
+        var rolesToRemove = currentRoles.Where(r => !defaultRoles.Contains(r)).ToList();
+
+        if (rolesToRemove.Any())
+        {
+            var removeResult = await userManager.RemoveFromRolesAsync(user, rolesToRemove);
+            if (!removeResult.Succeeded)
+                return ToResult(removeResult);
+        }
+
+        // Ensure user has all default roles
+        var rolesToAdd = defaultRoles.Except(currentRoles).ToList();
+        if (rolesToAdd.Any())
+        {
+            var addResult = await userManager.AddToRolesAsync(user, rolesToAdd);
+            if (!addResult.Succeeded)
+                return ToResult(addResult);
+        }
+
+        return Result.Success();
     }
 
     // Private helpers

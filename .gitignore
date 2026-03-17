@@ -364,9 +364,3 @@ FodyWeavers.xsd
 
 # Ignore Logs Folder
 src/SurveyBasket.Logs/
-
-# Ignore AI Model MD
-AI Model/
-
-# Ignore 
-SurveyBasket Implement This In My app/

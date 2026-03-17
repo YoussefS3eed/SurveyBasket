@@ -1,24 +1,16 @@
-﻿using SurveyBasket.Application.Common.Contracts;
+﻿using Microsoft.Extensions.Logging;
+using SurveyBasket.Application.Common.Contracts;
 using SurveyBasket.Application.Common.Extensions;
-using SurveyBasket.Domain.Common.Models;
 using SurveyBasket.Domain.Interfaces.Repositories;
 
 namespace SurveyBasket.Application.Features.Authentication.Commands.ConfirmEmail;
 
-internal sealed class ConfirmEmailCommandHandler(IUserRepository userRepository)
+internal sealed class ConfirmEmailCommandHandler(IUserRepository userRepository, ILogger<ConfirmEmailCommandHandler> logger)
     : IRequestHandler<ConfirmEmailCommand, Result>
 {
     public async Task<Result> Handle(
         ConfirmEmailCommand request, CancellationToken cancellationToken)
     {
-        var user = await userRepository.GetByIdAsync(request.UserId, cancellationToken);
-
-        if (user is null)
-            return UserErrors.InvalidCode;
-
-        if (user.EmailConfirmed)
-            return UserErrors.DuplicatedConfirmation;
-
         string code;
         try
         {
@@ -29,14 +21,27 @@ internal sealed class ConfirmEmailCommandHandler(IUserRepository userRepository)
             return UserErrors.InvalidCode;
         }
 
-        var result = await userRepository.ConfirmEmailAsync(user, code);
+        if (await userRepository.GetByIdAsync(request.UserId, cancellationToken) is not { } user)
+            return UserErrors.NotFound();
 
-        if (result.IsFailure)
-            return result;
+        if (user.EmailConfirmed)
+            return UserErrors.DuplicatedConfirmation;
 
-        // Assign Member role after successful email confirmation
-        await userRepository.AddToRoleAsync(user, DefaultRoles.Member);
+        var confirmResult = await userRepository.ConfirmEmailAsync(user, code);
 
-        return result;
+        if (confirmResult.IsFailure)
+            return confirmResult;
+
+        var currentRoles = await userRepository.GetUserRolesAndPermissionsAsync(user, cancellationToken);
+        if (!currentRoles.roles.Any())
+        {
+            await userRepository.AddToRoleAsync(user, DefaultRoles.Member);
+            logger.LogInformation("Default role '{Role}' assigned to user {UserId} on email confirmation",
+                DefaultRoles.Member, user.Id);
+        }
+
+        logger.LogInformation("Email confirmed for user {UserId}. User can now login.", user.Id);
+
+        return Result.Success();
     }
 }

@@ -18,18 +18,28 @@ internal sealed class JwtService(IOptions<JwtOptions> options, ILogger<JwtServic
     public (string token, int expiresIn, int refreshTokenExpiryDays) GenerateToken(
         UserTokenRequest tokenRequest,
         IEnumerable<string> roles,
-        IEnumerable<string> permissions)
+        IEnumerable<string> permissions,
+        string? securityStamp = null)
     {
-        Claim[] claims =
-        [
-            new(JwtRegisteredClaimNames.Sub,        tokenRequest.Id),
-            new(JwtRegisteredClaimNames.Email,       tokenRequest.Email),
-            new(JwtRegisteredClaimNames.GivenName,  tokenRequest.FirstName),
+        var claimsList = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Sub, tokenRequest.Id),
+            new(JwtRegisteredClaimNames.Email, tokenRequest.Email),
+            new(JwtRegisteredClaimNames.GivenName, tokenRequest.FirstName),
             new(JwtRegisteredClaimNames.FamilyName, tokenRequest.LastName),
-            new(JwtRegisteredClaimNames.Jti,         Guid.NewGuid().ToString()),
-            new("roles", JsonSerializer.Serialize(roles), JsonClaimValueTypes.JsonArray),
-            new("permissions", JsonSerializer.Serialize(permissions), JsonClaimValueTypes.JsonArray)
-        ];
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
+
+        // Add security stamp if provided
+        if (!string.IsNullOrEmpty(securityStamp))
+        {
+            claimsList.Add(new Claim("securityStamp", securityStamp));
+        }
+
+        claimsList.Add(new Claim("roles", JsonSerializer.Serialize(roles), JsonClaimValueTypes.JsonArray));
+        claimsList.Add(new Claim("permissions", JsonSerializer.Serialize(permissions), JsonClaimValueTypes.JsonArray));
+
+        Claim[] claims = [.. claimsList];
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -72,6 +82,41 @@ internal sealed class JwtService(IOptions<JwtOptions> options, ILogger<JwtServic
 
             return ((JwtSecurityToken)validatedToken)
                 .Claims.First(c => c.Type == JwtRegisteredClaimNames.Sub).Value;
+        }
+        catch (SecurityTokenException ex)
+        {
+            logger.LogWarning("Token validation failed: {Reason}", ex.Message);
+            return null;
+        }
+    }
+
+    public (string? UserId, bool IsStampValid)? ValidateTokenWithSecurityStamp(string token, string currentSecurityStamp)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));
+
+        try
+        {
+            handler.ValidateToken(token, new TokenValidationParameters
+            {
+                IssuerSigningKey = key,
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = true,
+                ValidIssuer = _options.Issuer,
+                ValidateAudience = true,
+                ValidAudience = _options.Audience,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            }, out SecurityToken validatedToken);
+
+            var jwtToken = (JwtSecurityToken)validatedToken;
+            var userId = jwtToken.Claims.First(c => c.Type == JwtRegisteredClaimNames.Sub).Value;
+            
+            // Validate security stamp
+            var stampClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "securityStamp");
+            var isStampValid = stampClaim?.Value == currentSecurityStamp;
+
+            return (userId, isStampValid);
         }
         catch (SecurityTokenException ex)
         {

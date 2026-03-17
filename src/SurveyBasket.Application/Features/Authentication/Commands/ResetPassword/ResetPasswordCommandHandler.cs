@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using SurveyBasket.Application.Common.Extensions;
-using SurveyBasket.Domain.Common.Models;
 using SurveyBasket.Domain.Interfaces.Repositories;
 
 namespace SurveyBasket.Application.Features.Authentication.Commands.ResetPassword;

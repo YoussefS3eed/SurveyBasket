@@ -10,6 +10,8 @@ public sealed class ApplicationUser : IdentityUser
 
     public string FullName => $"{FirstName} {LastName}";
 
+    public bool IsDisabled { get; set; }
+
     public List<RefreshToken> RefreshTokens { get; set; } = [];
 
     public static ApplicationUser Create(

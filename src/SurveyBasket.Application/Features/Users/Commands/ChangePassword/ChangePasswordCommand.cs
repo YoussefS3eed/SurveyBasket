@@ -1,5 +1,3 @@
-using SurveyBasket.Domain.Common.Models;
-
 namespace SurveyBasket.Application.Features.Users.Commands.ChangePassword;
 
 public sealed record ChangePasswordCommand(

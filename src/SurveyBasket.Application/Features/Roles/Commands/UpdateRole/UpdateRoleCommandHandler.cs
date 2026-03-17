@@ -9,9 +9,9 @@ public class UpdateRoleCommandHandler(IRoleRepository roleRepository)
     public async Task<Result> Handle(UpdateRoleCommand request, CancellationToken cancellationToken)
     {
         // Check if role exists
-        var role = await roleRepository.GetByIdAsync(request.Id, cancellationToken);
+        var role = await roleRepository.GetByIdAsync(request.Id!, cancellationToken);
         if (role is null)
-            return Result.Failure(RoleErrors.RoleNotFound(request.Id));
+            return Result.Failure(RoleErrors.RoleNotFound(request.Id!));
 
         // Check for duplicate name
         var exists = await roleRepository.ExistsByNameExceptIdAsync(request.Name, request.Id, cancellationToken);

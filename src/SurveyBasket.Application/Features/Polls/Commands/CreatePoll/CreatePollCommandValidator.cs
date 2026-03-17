@@ -1,8 +1,8 @@
 ﻿namespace SurveyBasket.Application.Features.Polls.Commands.CreatePoll;
 
-public class UpdatePollCommandValidator : AbstractValidator<CreatePollCommand>
+public class CreatePollCommandValidator : AbstractValidator<CreatePollCommand>
 {
-    public UpdatePollCommandValidator()
+    public CreatePollCommandValidator()
     {
         RuleFor(x => x.Title)
             .NotEmpty()

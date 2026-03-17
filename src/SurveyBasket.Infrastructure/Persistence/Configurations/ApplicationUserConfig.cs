@@ -10,7 +10,6 @@ public class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
         builder.Property(x => x.FirstName).HasMaxLength(100);
         builder.Property(x => x.LastName).HasMaxLength(100);
 
-
         // Configure RefreshTokens as owned entity
         builder.OwnsMany(x => x.RefreshTokens, refreshToken =>
         {
@@ -22,7 +21,8 @@ public class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
             refreshToken.WithOwner().HasForeignKey("UserId");
         });
 
-        var passwordHasher = new PasswordHasher<ApplicationUser>();
+        // Pre-hashed password for "P@ssword123" - static value to avoid model changes
+        const string adminPasswordHash = "AQAAAAIAAYagAAAAEAR8j58/FfDjwiMZTAWfASuvRCmxY03FD9bMPfSdbfeVabrt+o5Z4GV3ij+M3Ncc2g==";
 
         builder.HasData(new ApplicationUser
         {
@@ -36,7 +36,7 @@ public class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
             SecurityStamp = DefaultUsers.AdminSecurityStamp,
             ConcurrencyStamp = DefaultUsers.AdminConcurrencyStamp,
             EmailConfirmed = true,
-            PasswordHash = passwordHasher.HashPassword(null!, DefaultUsers.AdminPassword)
+            PasswordHash = adminPasswordHash
         });
     }
 }

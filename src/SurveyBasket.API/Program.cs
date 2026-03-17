@@ -33,7 +33,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseMiddleware<SecurityStampValidationMiddleware>();
 
 app.UseHangfireDashboard("/jobs", new DashboardOptions
 {

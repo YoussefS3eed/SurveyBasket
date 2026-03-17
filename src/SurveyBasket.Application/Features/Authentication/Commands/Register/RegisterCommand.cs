@@ -1,6 +1,4 @@
-﻿using SurveyBasket.Domain.Common.Models;
-
-namespace SurveyBasket.Application.Features.Authentication.Commands.Register;
+﻿namespace SurveyBasket.Application.Features.Authentication.Commands.Register;
 
 public record RegisterCommand(
     string FirstName,

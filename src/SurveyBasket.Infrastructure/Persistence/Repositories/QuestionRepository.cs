@@ -2,12 +2,12 @@
 
 internal sealed class QuestionRepository(ApplicationDbContext context) : IQuestionRepository
 {
-    public async Task<IEnumerable<Question>> GetByPollIdAsync(int pollId, CancellationToken ct = default)
-        => await context.Questions
+    public Task<IQueryable<Question>> GetByPollIdAsync(int pollId, CancellationToken ct = default)
+        => Task.FromResult(context.Questions
             .Where(q => q.PollId == pollId)
             .Include(q => q.Answers)
             .AsNoTracking()
-            .ToListAsync(ct);
+            .AsQueryable());
 
     public async Task<Question?> GetByIdAsync(int pollId, int id, bool includeAnswers = true, CancellationToken ct = default)
     {

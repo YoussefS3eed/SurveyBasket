@@ -1,6 +1,5 @@
 ﻿using SurveyBasket.Application.Common.Interfaces;
 using SurveyBasket.Application.Features.Authentication.Dtos;
-using SurveyBasket.Domain.Common.Models;
 using SurveyBasket.Domain.Interfaces.Repositories;
 
 namespace SurveyBasket.Application.Features.Authentication.Commands.RefreshToken;
@@ -21,6 +20,9 @@ internal sealed class RefreshTokenCommandHandler(
         if (await userRepository.GetByIdAsync(userId, cancellationToken) is not { } user)
             return UserErrors.InvalidJwtToken;
 
+        if (user.IsDisabled)
+            return Result.Failure<AuthResponse>(UserErrors.DisabledUser);
+
         // Validate refresh token && Revoke old token
         var storedToken = user.RefreshTokens
             .SingleOrDefault(rt => rt.Token == request.RefreshToken && rt.IsActive);
@@ -35,7 +37,7 @@ internal sealed class RefreshTokenCommandHandler(
 
         // Generate tokens with roles and permissions
         var (newToken, expiresIn, refreshTokenExpiryDays) =
-            jwtService.GenerateToken(user.ToTokenRequest(), userRoles, userPermissions);
+            jwtService.GenerateToken(user.ToTokenRequest(), userRoles, userPermissions, user.SecurityStamp);
 
         var newRefreshToken = jwtService.GenerateRefreshToken();
         var refreshExpiration = DateTime.UtcNow.AddDays(refreshTokenExpiryDays);

@@ -1,7 +1,6 @@
 ﻿using SurveyBasket.Application.Common.Caching;
 using SurveyBasket.Application.Common.Constants;
 using SurveyBasket.Application.Features.Results.Dtos;
-using SurveyBasket.Domain.Common.Models;
 
 namespace SurveyBasket.Application.Features.Results.Queries.GetPollVotes;
 

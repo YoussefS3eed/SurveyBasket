@@ -40,7 +40,7 @@ public class RolesController(ISender sender) : ControllerBase
 
     [HttpPut("{id}")]
     [HasPermission(Permissions.UpdateRoles)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateRoleCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update([FromRoute] string id, [FromBody] UpdateRoleCommand command, CancellationToken cancellationToken)
     {
         return (await sender.Send(command with { Id = id }, cancellationToken))
             .ToActionResult(this);

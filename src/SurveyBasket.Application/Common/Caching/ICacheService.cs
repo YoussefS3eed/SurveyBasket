@@ -11,6 +11,8 @@ public interface ICacheService
 
     Task RemoveAsync(string key, CancellationToken cancellationToken = default);
 
+    Task RemoveByPrefixAsync(string prefix, CancellationToken cancellationToken = default);
+
     // ✅ Added for bulk invalidation
     Task RemoveManyAsync(IEnumerable<string> keys, CancellationToken cancellationToken = default);
 }

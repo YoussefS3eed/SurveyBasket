@@ -1,6 +1,5 @@
 ﻿using SurveyBasket.Application.Common.Caching;
 using SurveyBasket.Application.Features.Polls.Dtos;
-using SurveyBasket.Domain.Common.Models;
 
 namespace SurveyBasket.Application.Features.Polls.Commands.CreatePoll;
 

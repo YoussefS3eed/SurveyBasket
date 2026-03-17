@@ -13,6 +13,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Question> Questions { get; set; }
     public DbSet<Vote> Votes { get; set; }
     public DbSet<VoteAnswer> VoteAnswers { get; set; }
+    public DbSet<EmailVerificationCode> EmailVerificationCodes { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

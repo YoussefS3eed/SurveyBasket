@@ -1,5 +1,4 @@
 ﻿using SurveyBasket.Application.Common.Caching;
-using SurveyBasket.Domain.Common.Models;
 
 namespace SurveyBasket.Application.Features.Polls.Commands.UpdatePoll;
 

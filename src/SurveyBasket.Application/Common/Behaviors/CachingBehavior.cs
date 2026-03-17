@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using SurveyBasket.Application.Common.Caching;
-using SurveyBasket.Domain.Common.Models;
 using System.Reflection;
 
 namespace SurveyBasket.Application.Common.Behaviors;
