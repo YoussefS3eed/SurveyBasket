@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using SurveyBasket.Application.Common.Extensions;
 using SurveyBasket.Application.Common.Interfaces;
 using SurveyBasket.Application.Features.Roles.Queries.GetAllRoles;
@@ -5,7 +6,6 @@ using SurveyBasket.Application.Features.Users.Dtos;
 using SurveyBasket.Domain.Entities;
 using SurveyBasket.Domain.Interfaces.Repositories;
 using System.Security.Cryptography;
-using Microsoft.Extensions.Logging;
 
 namespace SurveyBasket.Application.Features.Users.Commands.CreateUser;
 
@@ -85,7 +85,7 @@ internal sealed class CreateUserCommandHandler(
         // - At least 1 uppercase letter
         // - At least 1 digit
         // - At least 1 special character (!@#$%^&*()[]{}\-+=~`|:;"'<>,./?)
-        
+
         var lowercase = "abcdefghijklmnopqrstuvwxyz";
         var uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         var digits = "0123456789";
@@ -93,13 +93,13 @@ internal sealed class CreateUserCommandHandler(
         var all = lowercase + uppercase + digits + special;
 
         var password = new char[12];
-        
+
         // Ensure at least one of each required type
         password[0] = lowercase[RandomNumberGenerator.GetInt32(0, lowercase.Length)];
         password[1] = uppercase[RandomNumberGenerator.GetInt32(0, uppercase.Length)];
         password[2] = digits[RandomNumberGenerator.GetInt32(0, digits.Length)];
         password[3] = special[RandomNumberGenerator.GetInt32(0, special.Length)];
-        
+
         for (int i = 4; i < password.Length; i++)
         {
             password[i] = all[RandomNumberGenerator.GetInt32(0, all.Length)];

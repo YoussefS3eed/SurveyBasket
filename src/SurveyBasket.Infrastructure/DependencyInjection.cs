@@ -10,6 +10,7 @@ using SurveyBasket.Application.Common.Interfaces;
 using SurveyBasket.Domain.Interfaces;
 using SurveyBasket.Infrastructure.Authorization;
 using SurveyBasket.Infrastructure.Configurations;
+using SurveyBasket.Infrastructure.Health;
 using SurveyBasket.Infrastructure.Persistence;
 using SurveyBasket.Infrastructure.Persistence.Repositories;
 using SurveyBasket.Infrastructure.Services;
@@ -82,6 +83,12 @@ public static class DependencyInjection
 
         // Hangfire 
         services.AddBackgroundJobs(configuration);
+
+        // Add Health Checks
+        services.AddHealthChecks()
+            .AddSqlServer(name: "database", connectionString: configuration.GetConnectionString("DefaultConnection")!)
+            .AddHangfire(options => { options.MinimumAvailableServers = 1; })
+            .AddCheck<MailProviderHealthCheck>(name: "mail service");
 
         return services;
     }

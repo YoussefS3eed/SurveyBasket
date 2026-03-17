@@ -1,5 +1,5 @@
-using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace SurveyBasket.Application.Common.Models;
 

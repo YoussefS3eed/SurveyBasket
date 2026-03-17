@@ -1,7 +1,6 @@
-using SurveyBasket.Application.Common.Extensions;
+using Microsoft.Extensions.Logging;
 using SurveyBasket.Application.Common.Interfaces;
 using SurveyBasket.Domain.Interfaces.Repositories;
-using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
 
 namespace SurveyBasket.Application.Features.Users.Commands.UpdateProfile;
@@ -66,9 +65,10 @@ public sealed class UpdateProfileCommandHandler(
                 emailService.SendEmailVerificationCodeAsync(request.Email, user.FullName, verificationCode, cancellationToken));
 
             // Return success with redirect URL to login page
-            return Result.Success(new { 
-                RedirectUrl = "/login", 
-                NewEmail = request.Email, 
+            return Result.Success(new
+            {
+                RedirectUrl = "/login",
+                NewEmail = request.Email,
                 TokenInvalidated = true,
                 RequiresVerification = true,
                 Message = "Please login with your verification code sent to your new email"

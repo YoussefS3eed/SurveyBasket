@@ -111,7 +111,7 @@ internal sealed class JwtService(IOptions<JwtOptions> options, ILogger<JwtServic
 
             var jwtToken = (JwtSecurityToken)validatedToken;
             var userId = jwtToken.Claims.First(c => c.Type == JwtRegisteredClaimNames.Sub).Value;
-            
+
             // Validate security stamp
             var stampClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "securityStamp");
             var isStampValid = stampClaim?.Value == currentSecurityStamp;

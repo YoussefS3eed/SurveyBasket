@@ -1,7 +1,7 @@
+using Microsoft.Extensions.Logging;
 using SurveyBasket.Application.Common.Extensions;
 using SurveyBasket.Application.Common.Interfaces;
 using SurveyBasket.Domain.Interfaces.Repositories;
-using Microsoft.Extensions.Logging;
 
 namespace SurveyBasket.Application.Features.Users.Commands.ResendUserConfirmationEmail;
 
@@ -16,7 +16,7 @@ internal sealed class ResendUserConfirmationEmailCommandHandler(
     {
         // 1. Find user by email
         var user = await userRepository.GetByEmailAsync(request.Email, cancellationToken);
-        
+
         // If user not found, still return success (don't reveal if email exists)
         if (user is null)
             return Result.Success();

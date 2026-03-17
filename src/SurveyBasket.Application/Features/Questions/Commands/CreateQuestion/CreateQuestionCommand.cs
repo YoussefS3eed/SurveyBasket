@@ -1,5 +1,4 @@
 ﻿using SurveyBasket.Application.Common.Caching;
-using SurveyBasket.Application.Features.Polls.Dtos;
 using SurveyBasket.Application.Features.Questions.Dtos;
 
 namespace SurveyBasket.Application.Features.Questions.Commands.CreateQuestion;

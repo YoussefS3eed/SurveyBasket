@@ -1,7 +1,6 @@
-using SurveyBasket.Application.Common.Extensions;
+using Microsoft.Extensions.Logging;
 using SurveyBasket.Application.Common.Interfaces;
 using SurveyBasket.Domain.Interfaces.Repositories;
-using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
 
 namespace SurveyBasket.Application.Features.Users.Commands.ResendProfileVerificationCode;

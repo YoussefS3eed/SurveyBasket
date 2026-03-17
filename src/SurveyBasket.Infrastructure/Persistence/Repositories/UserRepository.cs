@@ -1,5 +1,4 @@
 ﻿using Mapster;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using SurveyBasket.Application.Common.Contracts;
 using SurveyBasket.Domain.Common.Dtos;
@@ -102,7 +101,7 @@ internal sealed class UserRepository(
 
     public async Task<Result> ConfirmEmailAsync(ApplicationUser user, string token)
     {
-        
+
 
         var identityResult = await userManager.ConfirmEmailAsync(user, token);
         return ToResult(identityResult);
@@ -210,12 +209,12 @@ internal sealed class UserRepository(
         return ToResult(identityResult);
     }
 
-    public async Task SetEmailVerificationCodeAsync(string userId,  string newEmail, string code, DateTime expiresAt, CancellationToken ct = default)
+    public async Task SetEmailVerificationCodeAsync(string userId, string newEmail, string code, DateTime expiresAt, CancellationToken ct = default)
     {
         // Invalidate any existing codes for this user
         var existingCodes = context.EmailVerificationCodes
             .Where(evc => evc.UserId == userId && !evc.IsUsed && evc.ExpiresAt > DateTime.UtcNow);
-        
+
         if (existingCodes.Any())
         {
             foreach (var existingCode in existingCodes)

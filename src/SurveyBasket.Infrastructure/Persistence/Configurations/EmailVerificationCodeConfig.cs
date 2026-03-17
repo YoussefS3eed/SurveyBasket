@@ -1,7 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SurveyBasket.Domain.Entities;
-
 namespace SurveyBasket.Infrastructure.Persistence.Configurations;
 
 public class EmailVerificationCodeConfig : IEntityTypeConfiguration<EmailVerificationCode>

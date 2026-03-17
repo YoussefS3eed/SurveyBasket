@@ -1,5 +1,7 @@
 using Hangfire;
 using HangfireBasicAuthenticationFilter;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 using SurveyBasket.API.Middleware;
 using SurveyBasket.Infrastructure.Configurations;
@@ -53,6 +55,11 @@ app.InitializeRecurringJobs();
 app.MapControllers();
 
 //app.MapIdentityApi<ApplicationUser>();
+
+app.MapHealthChecks("health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 
 app.Run();

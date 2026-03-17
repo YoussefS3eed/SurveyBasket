@@ -7,5 +7,5 @@ public record CreateUserCommand(
     string LastName,
     string UserName,
     string Email,
-    IEnumerable<string>? Roles 
+    IEnumerable<string>? Roles
 ) : IRequest<Result<UserResponse>>;

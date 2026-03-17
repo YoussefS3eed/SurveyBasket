@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using SurveyBasket.Application.Features.Users.Dtos;
 using SurveyBasket.Domain.Interfaces.Repositories;
 

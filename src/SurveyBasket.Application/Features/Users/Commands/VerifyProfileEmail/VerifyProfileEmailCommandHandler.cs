@@ -1,9 +1,8 @@
-using SurveyBasket.Application.Common.Extensions;
+using Microsoft.Extensions.Logging;
 using SurveyBasket.Application.Common.Interfaces;
 using SurveyBasket.Application.Features.Authentication.Dtos;
 using SurveyBasket.Domain.Common.Dtos;
 using SurveyBasket.Domain.Interfaces.Repositories;
-using Microsoft.Extensions.Logging;
 
 namespace SurveyBasket.Application.Features.Users.Commands.VerifyProfileEmail;
 

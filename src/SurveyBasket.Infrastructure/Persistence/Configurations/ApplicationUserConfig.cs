@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using SurveyBasket.Application.Common.Contracts;
+﻿using SurveyBasket.Application.Common.Contracts;
 
 namespace SurveyBasket.Infrastructure.Persistence.Configurations;
 
