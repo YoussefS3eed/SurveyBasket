@@ -1,4 +1,6 @@
-﻿using SurveyBasket.Application.Features.Votes.Commands.CreateVote;
+﻿using Microsoft.AspNetCore.RateLimiting;
+using SurveyBasket.API.Abstractions.Consts;
+using SurveyBasket.Application.Features.Votes.Commands.CreateVote;
 using SurveyBasket.Application.Features.Votes.Dtos;
 using SurveyBasket.Application.Features.Votes.Queries.GetAvailableQuestions;
 
@@ -7,6 +9,7 @@ namespace SurveyBasket.API.Controllers;
 [ApiController]
 [Route("api/polls/{pollId}/vote")]
 [Authorize(Roles = DefaultRoles.Member)]
+[EnableRateLimiting(RateLimiters.Concurrency)]
 public class VotesController(ISender sender) : ControllerBase
 {
     [HttpGet("")]

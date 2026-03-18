@@ -56,6 +56,8 @@ app.MapControllers();
 
 //app.MapIdentityApi<ApplicationUser>();
 
+app.UseRateLimiter();
+
 app.MapHealthChecks("health", new HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse

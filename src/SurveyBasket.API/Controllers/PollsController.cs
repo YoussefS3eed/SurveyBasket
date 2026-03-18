@@ -1,13 +1,19 @@
-﻿using SurveyBasket.Application.Features.Polls.Commands.CreatePoll;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.RateLimiting;
+using SurveyBasket.API.Abstractions.Consts;
+using SurveyBasket.Application.Features.Polls.Commands.CreatePoll;
 using SurveyBasket.Application.Features.Polls.Commands.DeletePoll;
 using SurveyBasket.Application.Features.Polls.Commands.TogglePollPublish;
 using SurveyBasket.Application.Features.Polls.Commands.UpdatePoll;
 using SurveyBasket.Application.Features.Polls.Queries.GetAllPolls;
 using SurveyBasket.Application.Features.Polls.Queries.GetCurrentPolls;
+using SurveyBasket.Application.Features.Polls.Queries.GetCurrentPollsV2;
 using SurveyBasket.Application.Features.Polls.Queries.GetPollById;
 
 namespace SurveyBasket.API.Controllers;
 
+[ApiVersion(1, Deprecated = true)]
+[ApiVersion(2)]
 [ApiController]
 [Route("api/[controller]")]
 
@@ -21,11 +27,23 @@ public class PollsController(ISender sender) : ControllerBase
             .ToActionResult(this);
     }
 
+    [MapToApiVersion(1)]
     [HttpGet("current")]
     [Authorize(Roles = DefaultRoles.Member)]
+    [EnableRateLimiting(RateLimiters.UserLimiter)]
     public async Task<IActionResult> GetCurrent(CancellationToken cancellationToken)
     {
         return (await sender.Send(new GetCurrentPollsQuery(), cancellationToken))
+            .ToActionResult(this);
+    }
+
+    [MapToApiVersion(2)]
+    [HttpGet("current")]
+    [Authorize(Roles = DefaultRoles.Member)]
+    [EnableRateLimiting(RateLimiters.UserLimiter)]
+    public async Task<IActionResult> GetCurrentV2(CancellationToken cancellationToken)
+    {
+        return (await sender.Send(new GetCurrentPollsQueryV2(), cancellationToken))
             .ToActionResult(this);
     }
 

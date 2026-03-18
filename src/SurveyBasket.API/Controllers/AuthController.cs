@@ -1,4 +1,6 @@
-﻿using SurveyBasket.Application.Features.Authentication.Commands.ConfirmEmail;
+﻿using Microsoft.AspNetCore.RateLimiting;
+using SurveyBasket.API.Abstractions.Consts;
+using SurveyBasket.Application.Features.Authentication.Commands.ConfirmEmail;
 using SurveyBasket.Application.Features.Authentication.Commands.ForgetPassword;
 using SurveyBasket.Application.Features.Authentication.Commands.Login;
 using SurveyBasket.Application.Features.Authentication.Commands.RefreshToken;
@@ -11,6 +13,7 @@ namespace SurveyBasket.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[EnableRateLimiting(RateLimiters.IpLimiter)]
 public class AuthController(ISender sender) : ControllerBase
 {
     [HttpPost("")]
@@ -35,6 +38,7 @@ public class AuthController(ISender sender) : ControllerBase
     }
 
     [HttpPost("register")]
+    [DisableRateLimiting]
     public async Task<IActionResult> Register([FromBody] RegisterCommand command, CancellationToken cancellationToken)
     {
         return (await sender.Send(command, cancellationToken))
