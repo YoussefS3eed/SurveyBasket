@@ -273,7 +273,7 @@ internal sealed class UserRepository(
         return (true, verificationCode.NewEmail, verificationCode.UserId);
     }
 
-    public async Task<EmailVerificationCodeInfo?> GetPendingEmailVerificationAsync(string userId, string newEmail, CancellationToken ct = default)
+    public async Task<EmailVerificationCodeInfoDto?> GetPendingEmailVerificationAsync(string userId, string newEmail, CancellationToken ct = default)
     {
         var verificationCode = await context.EmailVerificationCodes
             .FirstOrDefaultAsync(evc =>
@@ -285,7 +285,7 @@ internal sealed class UserRepository(
         if (verificationCode is null)
             return null;
 
-        return new EmailVerificationCodeInfo(
+        return new EmailVerificationCodeInfoDto(
             verificationCode.Code,
             verificationCode.NewEmail,
             verificationCode.ExpiresAt,

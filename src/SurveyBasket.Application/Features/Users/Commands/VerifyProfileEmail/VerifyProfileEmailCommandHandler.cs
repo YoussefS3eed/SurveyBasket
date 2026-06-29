@@ -11,32 +11,32 @@ public sealed class VerifyProfileEmailCommandHandler(
     ICurrentUserService currentUser,
     IJwtService jwtService,
     ILogger<VerifyProfileEmailCommandHandler> logger)
-    : IRequestHandler<VerifyProfileEmailCommand, Result<AuthResponse>>
+    : IRequestHandler<VerifyProfileEmailCommand, Result<AuthResponseDto>>
 {
-    public async Task<Result<AuthResponse>> Handle(VerifyProfileEmailCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AuthResponseDto>> Handle(VerifyProfileEmailCommand request, CancellationToken cancellationToken)
     {
         // Get authenticated user from token
         var authenticatedUserId = currentUser.Id;
         if (string.IsNullOrEmpty(authenticatedUserId))
-            return Result.Failure<AuthResponse>(UserErrors.InvalidJwtToken);
+            return Result.Failure<AuthResponseDto>(UserErrors.InvalidJwtToken);
 
         // Verify the code and get userId from the code itself
         var (isValid, newEmail, userId) = await userRepository.VerifyEmailCodeAsync(request.Code, cancellationToken);
 
         if (!isValid || newEmail is null || userId is null)
-            return Result.Failure<AuthResponse>(UserErrors.InvalidCode);
+            return Result.Failure<AuthResponseDto>(UserErrors.InvalidCode);
 
         // Ensure token userId matches code userId (prevent cross-user verification)
         if (userId != authenticatedUserId)
         {
             logger.LogWarning("User {AuthenticatedUserId} attempted to verify email for user {UserId}", authenticatedUserId, userId);
-            return Result.Failure<AuthResponse>(UserErrors.InvalidCode);
+            return Result.Failure<AuthResponseDto>(UserErrors.InvalidCode);
         }
 
         // Get user
         var user = await userRepository.GetByIdAsync(userId, cancellationToken);
         if (user is null)
-            return Result.Failure<AuthResponse>(UserErrors.NotFound(userId));
+            return Result.Failure<AuthResponseDto>(UserErrors.NotFound(userId));
 
         // Confirm the email
         user.Email = newEmail;
@@ -53,13 +53,13 @@ public sealed class VerifyProfileEmailCommandHandler(
 
         var updateResult = await userRepository.UpdateAsync(user);
         if (updateResult.IsFailure)
-            return Result.Failure<AuthResponse>(updateResult.Error);
+            return Result.Failure<AuthResponseDto>(updateResult.Error);
 
         logger.LogInformation("Email verified and confirmed for user {UserId}. All previous sessions invalidated.", userId);
 
         // Auto-login: Generate JWT tokens with NEW security stamp
         var (token, expiresIn, refreshTokenExpiryDays) = jwtService.GenerateToken(
-            new UserTokenRequest(user.Id, user.Email!, user.FirstName, user.LastName),
+            new UserTokenRequestDto(user.Id, user.Email!, user.FirstName, user.LastName),
             await userRepository.GetRolesAsync(user),
             [],
             user.SecurityStamp);
@@ -78,7 +78,7 @@ public sealed class VerifyProfileEmailCommandHandler(
 
         logger.LogInformation("User {UserId} auto-logged in after email verification with new session.", userId);
 
-        return new AuthResponse(
+        return new AuthResponseDto(
             user.Id,
             user.FirstName,
             user.LastName,

@@ -6,22 +6,22 @@ namespace SurveyBasket.Application.Features.Results.Queries.GetPollVotes;
 public class GetPollVotesQueryHandler(
     IResultRepository resultRepository,
     IPollRepository pollRepository)
-    : IRequestHandler<GetPollVotesQuery, Result<PollVotesResponse>>
+    : IRequestHandler<GetPollVotesQuery, Result<PollVotesResponseDto>>
 {
-    public async Task<Result<PollVotesResponse>> Handle(
+    public async Task<Result<PollVotesResponseDto>> Handle(
         GetPollVotesQuery request,
         CancellationToken cancellationToken)
     {
         var pollExists = await pollRepository.ExistsAsync(request.PollId, cancellationToken);
         if (!pollExists)
-            return Result.Failure<PollVotesResponse>(PollErrors.NotFound());
+            return Result.Failure<PollVotesResponseDto>(PollErrors.NotFound());
 
         var poll = await resultRepository.GetPollWithVotesAsync(request.PollId, cancellationToken);
 
         if (poll is null)
-            return Result.Failure<PollVotesResponse>(PollErrors.NotFound());
+            return Result.Failure<PollVotesResponseDto>(PollErrors.NotFound());
 
-        var response = poll.Adapt<PollVotesResponse>();
+        var response = poll.Adapt<PollVotesResponseDto>();
         return Result.Success(response);
     }
 }

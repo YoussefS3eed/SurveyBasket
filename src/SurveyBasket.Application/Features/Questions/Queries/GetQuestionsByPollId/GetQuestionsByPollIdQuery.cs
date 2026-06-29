@@ -5,7 +5,7 @@ using SurveyBasket.Application.Features.Questions.Dtos;
 
 namespace SurveyBasket.Application.Features.Questions.Queries.GetQuestionsByPollId;
 
-public record GetQuestionsByPollIdQuery(int PollId, RequestFilters Filters) : ICachedQuery<Result<PaginatedList<QuestionResponse>>>
+public record GetQuestionsByPollIdQuery(int PollId, RequestFilters Filters) : ICachedQuery<Result<PaginatedList<QuestionResponseDto>>>
 {
     public string CacheKey => CacheKeys.QuestionsByPollId(PollId, Filters.PageNumber, Filters.PageSize, Filters.SearchValue, Filters.SortColumn, Filters.SortDirection);
     public TimeSpan? Expiration => TimeSpan.FromMinutes(15);

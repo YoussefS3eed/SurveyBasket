@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.Application.Features.Results.Dtos;
 
-public record PollVotesResponse(
+public record PollVotesResponseDto(
     string Title,
-    IEnumerable<VoteResponse> Votes
+    IEnumerable<VoteResponseDto> Votes
 );

@@ -6,9 +6,9 @@ using System.Linq.Dynamic.Core;
 namespace SurveyBasket.Application.Features.Questions.Queries.GetQuestionsByPollId;
 
 internal sealed class GetQuestionsByPollIdQueryHandler(IQuestionRepository questionRepository, IPollRepository pollRepository)
-    : IRequestHandler<GetQuestionsByPollIdQuery, Result<PaginatedList<QuestionResponse>>>
+    : IRequestHandler<GetQuestionsByPollIdQuery, Result<PaginatedList<QuestionResponseDto>>>
 {
-    public async Task<Result<PaginatedList<QuestionResponse>>> Handle(GetQuestionsByPollIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedList<QuestionResponseDto>>> Handle(GetQuestionsByPollIdQuery request, CancellationToken cancellationToken)
     {
         var pollExists = await pollRepository.ExistsAsync(request.PollId, cancellationToken);
 
@@ -27,8 +27,8 @@ internal sealed class GetQuestionsByPollIdQueryHandler(IQuestionRepository quest
             query = query.OrderBy($"{request.Filters.SortColumn} {request.Filters.SortDirection}");
         }
 
-        var projectedQuery = query.ProjectToType<QuestionResponse>();
-        var questions = await PaginatedList<QuestionResponse>.CreateAsync(projectedQuery, request.Filters.PageNumber, request.Filters.PageSize, cancellationToken);
+        var projectedQuery = query.ProjectToType<QuestionResponseDto>();
+        var questions = await PaginatedList<QuestionResponseDto>.CreateAsync(projectedQuery, request.Filters.PageNumber, request.Filters.PageSize, cancellationToken);
 
         return Result.Success(questions);
     }

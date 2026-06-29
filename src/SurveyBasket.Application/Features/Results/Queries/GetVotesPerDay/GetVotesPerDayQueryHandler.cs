@@ -6,23 +6,23 @@ namespace SurveyBasket.Application.Features.Results.Queries.GetVotesPerDay;
 public class GetVotesPerDayQueryHandler(
     IResultRepository resultRepository,
     IPollRepository pollRepository)
-    : IRequestHandler<GetVotesPerDayQuery, Result<IEnumerable<VotesPerDayResponse>>>
+    : IRequestHandler<GetVotesPerDayQuery, Result<IEnumerable<VotesPerDayResponseDto>>>
 {
-    public async Task<Result<IEnumerable<VotesPerDayResponse>>> Handle(
+    public async Task<Result<IEnumerable<VotesPerDayResponseDto>>> Handle(
         GetVotesPerDayQuery request,
         CancellationToken cancellationToken)
     {
         var pollExists = await pollRepository.ExistsAsync(request.PollId, cancellationToken);
         if (!pollExists)
-            return Result.Failure<IEnumerable<VotesPerDayResponse>>(PollErrors.NotFound());
+            return Result.Failure<IEnumerable<VotesPerDayResponseDto>>(PollErrors.NotFound());
 
         var votes = await resultRepository.GetVotesByPollIdAsync(request.PollId, cancellationToken);
 
         var votesPerDay = votes
             .GroupBy(v => DateOnly.FromDateTime(v.SubmittedOn))
-            .Select(g => new VotesPerDayResponse(g.Key, g.Count()))
+            .Select(g => new VotesPerDayResponseDto(g.Key, g.Count()))
             .ToList();
 
-        return Result.Success<IEnumerable<VotesPerDayResponse>>(votesPerDay);
+        return Result.Success<IEnumerable<VotesPerDayResponseDto>>(votesPerDay);
     }
 }

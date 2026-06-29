@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.Application.Features.Results.Dtos;
 
-public record QuestionAnswerResponse(
+public record QuestionAnswerResponseDto(
     string Question,
     string Answer
 );

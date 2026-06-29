@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.Application.Features.Votes.Dtos;
 
-public record VoteAnswerRequest(
+public record VoteAnswerRequestDto(
     int QuestionId,
     int AnswerId
 );

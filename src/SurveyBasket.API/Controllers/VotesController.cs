@@ -20,7 +20,7 @@ public class VotesController(ISender sender) : ControllerBase
     }
 
     [HttpPost("")]
-    public async Task<IActionResult> Vote(int pollId, [FromBody] VoteRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Vote(int pollId, [FromBody] VoteRequestDto request, CancellationToken cancellationToken)
     {
         return (await sender.Send(new AddVoteCommand(pollId, request.Answers), cancellationToken))
             .ToActionResult(this);

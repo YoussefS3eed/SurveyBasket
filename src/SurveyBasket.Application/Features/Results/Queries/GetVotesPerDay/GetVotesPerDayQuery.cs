@@ -4,7 +4,7 @@ using SurveyBasket.Application.Features.Results.Dtos;
 
 namespace SurveyBasket.Application.Features.Results.Queries.GetVotesPerDay;
 
-public record GetVotesPerDayQuery(int PollId) : ICachedQuery<Result<IEnumerable<VotesPerDayResponse>>>
+public record GetVotesPerDayQuery(int PollId) : ICachedQuery<Result<IEnumerable<VotesPerDayResponseDto>>>
 {
     public string CacheKey => CacheKeys.VotesPerDay(PollId);
     public TimeSpan? Expiration => TimeSpan.FromMinutes(20);

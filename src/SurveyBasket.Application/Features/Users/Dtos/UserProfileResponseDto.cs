@@ -1,6 +1,6 @@
 namespace SurveyBasket.Application.Features.Users.Dtos;
 
-public record UserProfileResponse(
+public record UserProfileResponseDto(
     string Id,
     string FirstName,
     string LastName,

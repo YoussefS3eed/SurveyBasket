@@ -53,5 +53,5 @@ public interface IUserRepository
     Task SetEmailVerificationCodeAsync(string userId, string newEmail, string code, DateTime expiresAt, CancellationToken ct = default);
     Task<(bool IsValid, string? NewEmail)> VerifyEmailCodeAsync(string userId, string code, CancellationToken ct = default);
     Task<(bool IsValid, string? NewEmail, string? UserId)> VerifyEmailCodeAsync(string code, CancellationToken ct = default);
-    Task<EmailVerificationCodeInfo?> GetPendingEmailVerificationAsync(string userId, string newEmail, CancellationToken ct = default);
+    Task<EmailVerificationCodeInfoDto?> GetPendingEmailVerificationAsync(string userId, string newEmail, CancellationToken ct = default);
 }

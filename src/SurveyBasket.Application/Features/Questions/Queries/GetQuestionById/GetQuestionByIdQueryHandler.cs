@@ -4,15 +4,15 @@ using SurveyBasket.Domain.Interfaces.Repositories;
 namespace SurveyBasket.Application.Features.Questions.Queries.GetQuestionById;
 
 internal sealed class GetQuestionByIdQueryHandler(IQuestionRepository questionRepository)
-    : IRequestHandler<GetQuestionByIdQuery, Result<QuestionResponse>>
+    : IRequestHandler<GetQuestionByIdQuery, Result<QuestionResponseDto>>
 {
-    public async Task<Result<QuestionResponse>> Handle(GetQuestionByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<QuestionResponseDto>> Handle(GetQuestionByIdQuery request, CancellationToken cancellationToken)
     {
         var question = await questionRepository.GetByIdAsync(request.PollId, request.Id, true, cancellationToken);
 
         if (question is null)
-            return Result.Failure<QuestionResponse>(QuestionErrors.NotFound());
+            return Result.Failure<QuestionResponseDto>(QuestionErrors.NotFound());
 
-        return Result.Success(question.Adapt<QuestionResponse>());
+        return Result.Success(question.Adapt<QuestionResponseDto>());
     }
 }

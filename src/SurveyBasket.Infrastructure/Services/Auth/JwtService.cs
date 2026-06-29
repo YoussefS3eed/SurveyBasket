@@ -16,7 +16,7 @@ internal sealed class JwtService(IOptions<JwtOptions> options, ILogger<JwtServic
     private readonly JwtOptions _options = options.Value;
 
     public (string token, int expiresIn, int refreshTokenExpiryDays) GenerateToken(
-        UserTokenRequest tokenRequest,
+        UserTokenRequestDto tokenRequest,
         IEnumerable<string> roles,
         IEnumerable<string> permissions,
         string? securityStamp = null)

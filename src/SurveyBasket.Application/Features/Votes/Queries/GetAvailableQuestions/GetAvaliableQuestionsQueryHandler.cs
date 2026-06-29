@@ -9,9 +9,9 @@ public class GetAvailableQuestionsQueryHandler(
     IVoteRepository voteRepository,
     IPollRepository pollRepository,
     ICurrentUserService currentUser)
-    : IRequestHandler<GetAvailableQuestionsQuery, Result<IEnumerable<AvailableQuestionResponse>>>
+    : IRequestHandler<GetAvailableQuestionsQuery, Result<IEnumerable<AvailableQuestionResponseDto>>>
 {
-    public async Task<Result<IEnumerable<AvailableQuestionResponse>>> Handle(
+    public async Task<Result<IEnumerable<AvailableQuestionResponseDto>>> Handle(
         GetAvailableQuestionsQuery request,
         CancellationToken cancellationToken)
     {
@@ -23,13 +23,13 @@ public class GetAvailableQuestionsQueryHandler(
 
         var pollAvailable = await pollRepository.IsPollAvailableAsync(request.PollId, cancellationToken);
         if (!pollAvailable)
-            return Result.Failure<IEnumerable<AvailableQuestionResponse>>(PollErrors.NotFound());
+            return Result.Failure<IEnumerable<AvailableQuestionResponseDto>>(PollErrors.NotFound());
 
         var questions = await questionRepository.GetActiveQuestionsByPollIdAsync(request.PollId, cancellationToken);
         if (!questions.Any())
             return PollErrors.NotFound();
 
-        var response = questions.Adapt<IEnumerable<AvailableQuestionResponse>>();
+        var response = questions.Adapt<IEnumerable<AvailableQuestionResponseDto>>();
         return Result.Success(response);
     }
 }

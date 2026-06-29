@@ -1,6 +1,6 @@
 namespace SurveyBasket.Application.Features.Roles.Dtos;
 
-public record RoleResponse(
+public record RoleResponseDto(
     string Id,
     string Name,
     bool IsDeleted

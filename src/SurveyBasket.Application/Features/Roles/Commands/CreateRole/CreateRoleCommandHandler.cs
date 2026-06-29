@@ -6,19 +6,19 @@ using SurveyBasket.Domain.Interfaces.Repositories;
 namespace SurveyBasket.Application.Features.Roles.Commands.CreateRole;
 
 public class CreateRoleCommandHandler(IRoleRepository roleRepository)
-    : IRequestHandler<CreateRoleCommand, Result<RoleDetailResponse>>
+    : IRequestHandler<CreateRoleCommand, Result<RoleDetailResponseDto>>
 {
-    public async Task<Result<RoleDetailResponse>> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
+    public async Task<Result<RoleDetailResponseDto>> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
     {
         // Check if role exists
         var exists = await roleRepository.ExistsByNameExceptIdAsync(request.Name, null, cancellationToken);
         if (exists)
-            return Result.Failure<RoleDetailResponse>(RoleErrors.DuplicateRole(request.Name));
+            return Result.Failure<RoleDetailResponseDto>(RoleErrors.DuplicateRole(request.Name));
 
         // Validate permissions
         var allowedPermissions = Permissions.GetAllPermissions();
         if (request.Permissions.Except(allowedPermissions).Any())
-            return Result.Failure<RoleDetailResponse>(RoleErrors.InvalidPermissions);
+            return Result.Failure<RoleDetailResponseDto>(RoleErrors.InvalidPermissions);
 
         // Create role
         var role = new ApplicationRole
@@ -29,8 +29,8 @@ public class CreateRoleCommandHandler(IRoleRepository roleRepository)
 
         var addResult = await roleRepository.AddAsync(role, request.Permissions, cancellationToken);
         if (addResult.IsFailure)
-            return Result.Failure<RoleDetailResponse>(addResult.Error);
+            return Result.Failure<RoleDetailResponseDto>(addResult.Error);
 
-        return Result.Success(new RoleDetailResponse(role.Id, role.Name!, role.IsDeleted, request.Permissions));
+        return Result.Success(new RoleDetailResponseDto(role.Id, role.Name!, role.IsDeleted, request.Permissions));
     }
 }

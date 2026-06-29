@@ -9,21 +9,21 @@ internal sealed class CreateQuestionCommandHandler(
     IQuestionRepository questionRepository,
     IPollRepository pollRepository,
     IUnitOfWork unitOfWork)
-    : IRequestHandler<CreateQuestionCommand, Result<QuestionResponse>>
+    : IRequestHandler<CreateQuestionCommand, Result<QuestionResponseDto>>
 {
-    public async Task<Result<QuestionResponse>> Handle(
+    public async Task<Result<QuestionResponseDto>> Handle(
         CreateQuestionCommand request, CancellationToken cancellationToken)
     {
         var pollExists = await pollRepository.ExistsAsync(request.PollId, cancellationToken);
 
         if (!pollExists)
-            return Result.Failure<QuestionResponse>(PollErrors.NotFound(request.PollId));
+            return Result.Failure<QuestionResponseDto>(PollErrors.NotFound(request.PollId));
 
         var isDuplicate = await questionRepository.ExistsByContentExceptIdAsync(
             request.PollId, request.Content, null, cancellationToken);
 
         if (isDuplicate)
-            return Result.Failure<QuestionResponse>(QuestionErrors.DuplicatedQuestionContent);
+            return Result.Failure<QuestionResponseDto>(QuestionErrors.DuplicatedQuestionContent);
 
         var question = new Question
         {
@@ -35,6 +35,6 @@ internal sealed class CreateQuestionCommandHandler(
         await questionRepository.AddAsync(question, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(question.Adapt<QuestionResponse>());
+        return Result.Success(question.Adapt<QuestionResponseDto>());
     }
 }

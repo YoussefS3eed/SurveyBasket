@@ -8,4 +8,4 @@ public record CreateUserCommand(
     string UserName,
     string Email,
     IEnumerable<string>? Roles
-) : IRequest<Result<UserResponse>>;
+) : IRequest<Result<UserResponseDto>>;

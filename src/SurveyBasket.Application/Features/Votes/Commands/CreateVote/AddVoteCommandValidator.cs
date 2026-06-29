@@ -14,7 +14,7 @@ public class AddVoteCommandValidator : AbstractValidator<AddVoteCommand>
     }
 }
 
-public class VoteAnswerRequestValidator : AbstractValidator<VoteAnswerRequest>
+public class VoteAnswerRequestValidator : AbstractValidator<VoteAnswerRequestDto>
 {
     public VoteAnswerRequestValidator()
     {

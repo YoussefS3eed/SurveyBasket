@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.Application.Features.Results.Dtos;
 
-public record VotesPerDayResponse(
+public record VotesPerDayResponseDto(
     DateOnly Date,
     int NumberOfVotes
 );

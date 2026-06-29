@@ -68,30 +68,31 @@ The project follows **Clean / Onion Architecture** with clear separation of conc
 
 ## 🛠️ Tech Stack
 
-| Category | Technology |
-|---|---|
-| **Framework** | .NET 10 / ASP.NET Core 10 |
-| **Language** | C# 13 |
-| **ORM** | Entity Framework Core 10 |
-| **Database** | SQL Server (LocalDB) |
-| **Authentication** | ASP.NET Core Identity + JWT Bearer Tokens |
-| **Authorization** | Custom Permission-Based Policy System |
-| **Mediator / CQRS** | MediatR 14 |
-| **Validation** | FluentValidation 12 |
-| **Object Mapping** | Mapster 7.4 |
-| **Background Jobs** | Hangfire 1.8 |
-| **Email** | MailKit 4.15 |
-| **Caching** | HybridCache (in-memory) |
-| **Logging** | Serilog |
-| **API Documentation** | Swagger / Swashbuckle |
-| **API Versioning** | Asp.Versioning |
-| **Health Checks** | AspNetCore.HealthChecks (SQL Server, Hangfire, Mail) |
+| Category              | Technology                                           |
+| --------------------- | ---------------------------------------------------- |
+| **Framework**         | .NET 10 / ASP.NET Core 10                            |
+| **Language**          | C# 13                                                |
+| **ORM**               | Entity Framework Core 10                             |
+| **Database**          | SQL Server (LocalDB)                                 |
+| **Authentication**    | ASP.NET Core Identity + JWT Bearer Tokens            |
+| **Authorization**     | Custom Permission-Based Policy System                |
+| **Mediator / CQRS**   | MediatR 14                                           |
+| **Validation**        | FluentValidation 12                                  |
+| **Object Mapping**    | Mapster 7.4                                          |
+| **Background Jobs**   | Hangfire 1.8                                         |
+| **Email**             | MailKit 4.15                                         |
+| **Caching**           | HybridCache (in-memory)                              |
+| **Logging**           | Serilog                                              |
+| **API Documentation** | Swagger / Swashbuckle                                |
+| **API Versioning**    | Asp.Versioning                                       |
+| **Health Checks**     | AspNetCore.HealthChecks (SQL Server, Hangfire, Mail) |
 
 ---
 
 ## ✨ Features
 
 ### Core Functionality
+
 - 📋 **Poll Management** — Create, update, delete, publish/unpublish polls with start and end dates
 - ❓ **Question Management** — Add and manage questions within polls
 - ✅ **Answer Management** — Define multiple-choice answers for questions
@@ -99,6 +100,7 @@ The project follows **Clean / Onion Architecture** with clear separation of conc
 - 📊 **Results & Analytics** — View raw votes, votes per day, and votes per question
 
 ### Security & Access Control
+
 - 🔐 **JWT Authentication** — Secure token-based auth with refresh token rotation
 - 🛡️ **Permission-Based Authorization** — Fine-grained permission system with custom attributes
 - 👥 **Role Management** — Admin, Member, and custom roles with assignable permissions
@@ -107,6 +109,7 @@ The project follows **Clean / Onion Architecture** with clear separation of conc
 - 🔑 **Password Management** — Forget/reset password flows
 
 ### Infrastructure
+
 - ⚡ **Rate Limiting** — IP-based and user-based limiters with concurrency control
 - 📌 **API Versioning** — Support for multiple API versions (v1, v2)
 - 📝 **Structured Logging** — Serilog with console and file sinks
@@ -232,17 +235,20 @@ SurveyBasket/
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/YoussefS3eed/SurveyBasket.git
    cd SurveyBasket
    ```
 
 2. **Restore packages**
+
    ```bash
    dotnet restore
    ```
 
 3. **Configure User Secrets** (see [Configuration](#-configuration))
+
    ```bash
    cd src/SurveyBasket.API
    dotnet user-secrets set "Jwt:Key" "your-super-secret-key-at-least-32-characters"
@@ -252,11 +258,13 @@ SurveyBasket/
    ```
 
 4. **Apply migrations**
+
    ```bash
    dotnet ef database update --project ../SurveyBasket.Infrastructure --startup-project .
    ```
 
 5. **Run the application**
+
    ```bash
    dotnet run --project src/SurveyBasket.API
    ```
@@ -272,15 +280,15 @@ SurveyBasket/
 
 The application uses `appsettings.json` with User Secrets for sensitive data. Key configuration sections:
 
-| Section | Description |
-|---|---|
-| `ConnectionStrings:DefaultConnection` | SQL Server connection string |
-| `ConnectionStrings:HangfireConnection` | Hangfire job storage connection |
-| `Jwt` | JWT signing key, issuer, audience, and token expiry |
-| `EmailSettings` | SMTP mail, display name, password, host, and port |
-| `HangfireSettings` | Dashboard basic auth credentials |
-| `Serilog` | Logging configuration (levels, sinks, enrichment) |
-| `AllowedOrigins` | CORS allowed origins |
+| Section                                | Description                                         |
+| -------------------------------------- | --------------------------------------------------- |
+| `ConnectionStrings:DefaultConnection`  | SQL Server connection string                        |
+| `ConnectionStrings:HangfireConnection` | Hangfire job storage connection                     |
+| `Jwt`                                  | JWT signing key, issuer, audience, and token expiry |
+| `EmailSettings`                        | SMTP mail, display name, password, host, and port   |
+| `HangfireSettings`                     | Dashboard basic auth credentials                    |
+| `Serilog`                              | Logging configuration (levels, sinks, enrichment)   |
+| `AllowedOrigins`                       | CORS allowed origins                                |
 
 > ⚠️ **Important:** Never commit secrets like `Jwt:Key`, `EmailSettings:Password`, or `HangfireSettings` credentials. Use **User Secrets** for local development or environment variables for production.
 
@@ -289,76 +297,85 @@ The application uses `appsettings.json` with User Secrets for sensitive data. Ke
 ## 📡 API Endpoints
 
 ### Authentication (`/Auth`)
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/Auth` | Login with credentials |
-| `POST` | `/Auth/register` | Register a new user |
-| `POST` | `/Auth/confirm-email` | Confirm email address |
-| `POST` | `/Auth/resend-confirmation` | Resend confirmation email |
-| `PUT` | `/Auth/refresh-token` | Refresh JWT access token |
-| `POST` | `/Auth/revoke-refresh-token` | Revoke a refresh token |
-| `POST` | `/Auth/forget-password` | Request password reset |
-| `POST` | `/Auth/reset-password` | Reset password |
+
+| Method | Endpoint                     | Description               |
+| ------ | ---------------------------- | ------------------------- |
+| `POST` | `/Auth`                      | Login with credentials    |
+| `POST` | `/Auth/register`             | Register a new user       |
+| `POST` | `/Auth/confirm-email`        | Confirm email address     |
+| `POST` | `/Auth/resend-confirmation`  | Resend confirmation email |
+| `PUT`  | `/Auth/refresh-token`        | Refresh JWT access token  |
+| `POST` | `/Auth/revoke-refresh-token` | Revoke a refresh token    |
+| `POST` | `/Auth/forget-password`      | Request password reset    |
+| `POST` | `/Auth/reset-password`       | Reset password            |
 
 ### Polls (`/api/polls`)
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/polls` | Get all polls *(requires `GetPolls` permission)* |
-| `GET` | `/api/polls/current` | Get current active polls *(v1 & v2)* |
-| `GET` | `/api/polls/{id}` | Get poll by ID |
-| `POST` | `/api/polls` | Create a new poll |
-| `PUT` | `/api/polls/{id}` | Update a poll |
-| `DELETE` | `/api/polls/{id}` | Delete a poll |
-| `PUT` | `/api/polls/{id}/togglePublish` | Toggle poll publish status |
+
+| Method   | Endpoint                        | Description                                      |
+| -------- | ------------------------------- | ------------------------------------------------ |
+| `GET`    | `/api/polls`                    | Get all polls _(requires `GetPolls` permission)_ |
+| `GET`    | `/api/polls/current`            | Get current active polls _(v1 & v2)_             |
+| `GET`    | `/api/polls/{id}`               | Get poll by ID                                   |
+| `POST`   | `/api/polls`                    | Create a new poll                                |
+| `PUT`    | `/api/polls/{id}`               | Update a poll                                    |
+| `DELETE` | `/api/polls/{id}`               | Delete a poll                                    |
+| `PUT`    | `/api/polls/{id}/togglePublish` | Toggle poll publish status                       |
 
 ### Questions (`/api/polls/{pollId}/questions`)
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/polls/{pollId}/questions` | Get all questions for a poll |
-| `GET` | `/api/polls/{pollId}/questions/{id}` | Get question by ID |
-| `POST` | `/api/polls/{pollId}/questions` | Add a question |
-| `PUT` | `/api/polls/{pollId}/questions/{id}` | Update a question |
+
+| Method | Endpoint                             | Description                  |
+| ------ | ------------------------------------ | ---------------------------- |
+| `GET`  | `/api/polls/{pollId}/questions`      | Get all questions for a poll |
+| `GET`  | `/api/polls/{pollId}/questions/{id}` | Get question by ID           |
+| `POST` | `/api/polls/{pollId}/questions`      | Add a question               |
+| `PUT`  | `/api/polls/{pollId}/questions/{id}` | Update a question            |
 
 ### Voting (`/api/polls/{pollId}/vote`)
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/polls/{pollId}/vote` | Get available questions to vote on |
-| `POST` | `/api/polls/{pollId}/vote` | Submit a vote |
+
+| Method | Endpoint                   | Description                        |
+| ------ | -------------------------- | ---------------------------------- |
+| `GET`  | `/api/polls/{pollId}/vote` | Get available questions to vote on |
+| `POST` | `/api/polls/{pollId}/vote` | Submit a vote                      |
 
 ### Results (`/api/polls/{pollId}/results`)
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/polls/{pollId}/results/raw-data` | Get raw vote data |
-| `GET` | `/api/polls/{pollId}/results/votes-per-day` | Get votes per day breakdown |
-| `GET` | `/api/polls/{pollId}/results/votes-per-question` | Get votes per question stats |
+
+| Method | Endpoint                                         | Description                  |
+| ------ | ------------------------------------------------ | ---------------------------- |
+| `GET`  | `/api/polls/{pollId}/results/raw-data`           | Get raw vote data            |
+| `GET`  | `/api/polls/{pollId}/results/votes-per-day`      | Get votes per day breakdown  |
+| `GET`  | `/api/polls/{pollId}/results/votes-per-question` | Get votes per question stats |
 
 ### User Management (`/api/users`)
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/users` | List all users |
-| `GET` | `/api/users/{id}` | Get user by ID |
-| `POST` | `/api/users` | Create a user |
-| `PUT` | `/api/users/{id}` | Update user details |
+
+| Method | Endpoint          | Description         |
+| ------ | ----------------- | ------------------- |
+| `GET`  | `/api/users`      | List all users      |
+| `GET`  | `/api/users/{id}` | Get user by ID      |
+| `POST` | `/api/users`      | Create a user       |
+| `PUT`  | `/api/users/{id}` | Update user details |
 
 ### Account (`/api/account`)
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/account` | Get current user profile |
-| `PUT` | `/api/account` | Update current user profile |
-| `PUT` | `/api/account/password` | Change password |
+
+| Method | Endpoint                | Description                 |
+| ------ | ----------------------- | --------------------------- |
+| `GET`  | `/api/account`          | Get current user profile    |
+| `PUT`  | `/api/account`          | Update current user profile |
+| `PUT`  | `/api/account/password` | Change password             |
 
 ### Role Management (`/api/roles`)
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/roles` | Get all roles |
-| `POST` | `/api/roles` | Create a role |
-| `PUT` | `/api/roles/{id}` | Update a role |
+
+| Method | Endpoint          | Description   |
+| ------ | ----------------- | ------------- |
+| `GET`  | `/api/roles`      | Get all roles |
+| `POST` | `/api/roles`      | Create a role |
+| `PUT`  | `/api/roles/{id}` | Update a role |
 
 ---
 
 ## 🔐 Authentication & Authorization
 
 ### Authentication Flow
+
 1. **Register** → User receives a confirmation email
 2. **Confirm Email** → Account becomes active
 3. **Login** → Receive JWT access token + refresh token
@@ -366,6 +383,7 @@ The application uses `appsettings.json` with User Secrets for sensitive data. Ke
 5. **Revoke** → Invalidate refresh token on logout
 
 ### Authorization Model
+
 The system uses a **custom permission-based authorization** system:
 
 - **Roles** — Predefined (`Admin`, `Member`) and custom roles
@@ -389,11 +407,11 @@ The application uses **Hangfire** for background job processing:
 
 Health monitoring is available at the `/health` endpoint with detailed status for:
 
-| Check | Description |
-|---|---|
-| **Database** | SQL Server connectivity check |
-| **Hangfire** | Minimum available server validation |
-| **Mail Service** | SMTP provider connectivity check |
+| Check            | Description                         |
+| ---------------- | ----------------------------------- |
+| **Database**     | SQL Server connectivity check       |
+| **Hangfire**     | Minimum available server validation |
+| **Mail Service** | SMTP provider connectivity check    |
 
 ---
 

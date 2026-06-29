@@ -7,9 +7,9 @@ namespace SurveyBasket.Application.Features.Authentication.Commands.RefreshToken
 internal sealed class RefreshTokenCommandHandler(
     IUserRepository userRepository,
     IJwtService jwtService)
-    : IRequestHandler<RefreshTokenCommand, Result<AuthResponse>>
+    : IRequestHandler<RefreshTokenCommand, Result<AuthResponseDto>>
 {
-    public async Task<Result<AuthResponse>> Handle(
+    public async Task<Result<AuthResponseDto>> Handle(
         RefreshTokenCommand request, CancellationToken cancellationToken)
     {
         // Validate existing JWT to extract userId
@@ -21,7 +21,7 @@ internal sealed class RefreshTokenCommandHandler(
             return UserErrors.InvalidJwtToken;
 
         if (user.IsDisabled)
-            return Result.Failure<AuthResponse>(UserErrors.DisabledUser);
+            return Result.Failure<AuthResponseDto>(UserErrors.DisabledUser);
 
         // Validate refresh token && Revoke old token
         var storedToken = user.RefreshTokens
@@ -50,7 +50,7 @@ internal sealed class RefreshTokenCommandHandler(
 
         await userRepository.UpdateAsync(user);
 
-        return Result.Success(new AuthResponse(
+        return Result.Success(new AuthResponseDto(
             user.Id,
             user.FirstName,
             user.LastName,

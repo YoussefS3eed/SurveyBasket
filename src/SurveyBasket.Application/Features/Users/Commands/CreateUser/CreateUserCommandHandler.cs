@@ -15,24 +15,24 @@ internal sealed class CreateUserCommandHandler(
     IBackgroundJobService backgroundJobService,
     IApplicationUrlService urlService,
     ILogger<CreateUserCommandHandler> logger)
-    : IRequestHandler<CreateUserCommand, Result<UserResponse>>
+    : IRequestHandler<CreateUserCommand, Result<UserResponseDto>>
 {
-    public async Task<Result<UserResponse>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<UserResponseDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         if (await userRepository.IsEmailExistsAsync(request.Email, cancellationToken))
-            return Result.Failure<UserResponse>(UserErrors.DuplicatedEmail(request.Email));
+            return Result.Failure<UserResponseDto>(UserErrors.DuplicatedEmail(request.Email));
 
         if (await userRepository.IsUsernameExistsAsync(request.UserName, cancellationToken))
-            return Result.Failure<UserResponse>(UserErrors.DuplicatedUsername(request.UserName));
+            return Result.Failure<UserResponseDto>(UserErrors.DuplicatedUsername(request.UserName));
 
         if (request.Roles != null)
         {
             var rolesResult = await sender.Send(new GetAllRolesQuery(), cancellationToken);
             if (rolesResult.IsFailure)
-                return Result.Failure<UserResponse>(rolesResult.Error);
+                return Result.Failure<UserResponseDto>(rolesResult.Error);
 
             if (request.Roles.Except([.. rolesResult.Value.Select(r => r.Name)]).Any())
-                return Result.Failure<UserResponse>(UserErrors.InvalidRoles);
+                return Result.Failure<UserResponseDto>(UserErrors.InvalidRoles);
         }
 
         var user = ApplicationUser.Create(
@@ -45,11 +45,11 @@ internal sealed class CreateUserCommandHandler(
         var createResult = await userRepository.CreateAsync(user, tempPassword);
 
         if (createResult.IsFailure)
-            return Result.Failure<UserResponse>(createResult.Error);
+            return Result.Failure<UserResponseDto>(createResult.Error);
 
         var addRolesResult = await userRepository.AddToRolesAsync(user.Id, request.Roles ?? [], cancellationToken);
         if (addRolesResult.IsFailure)
-            return Result.Failure<UserResponse>(addRolesResult.Error);
+            return Result.Failure<UserResponseDto>(addRolesResult.Error);
 
         var code = await userRepository.GenerateEmailConfirmationTokenAsync(user);
         code = code.ToBase64UrlEncoded();
@@ -64,7 +64,7 @@ internal sealed class CreateUserCommandHandler(
         backgroundJobService.Enqueue<IEmailService>(emailService =>
             emailService.SendUserCreatedEmailAsync(user.Email!, user.FullName, user.UserName!, tempPassword, confirmationLink, cancellationToken));
 
-        var response = new UserResponse(
+        var response = new UserResponseDto(
             user.Id,
             user.UserName!,
             user.FirstName,

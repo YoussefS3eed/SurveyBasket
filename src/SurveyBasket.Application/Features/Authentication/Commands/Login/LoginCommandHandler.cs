@@ -9,16 +9,16 @@ internal sealed class LoginCommandHandler(
     IUserRepository userRepository,
     IJwtService jwtService,
     ILogger<LoginCommandHandler> logger)
-    : IRequestHandler<LoginCommand, Result<AuthResponse>>
+    : IRequestHandler<LoginCommand, Result<AuthResponseDto>>
 {
-    public async Task<Result<AuthResponse>> Handle(
+    public async Task<Result<AuthResponseDto>> Handle(
         LoginCommand request, CancellationToken cancellationToken)
     {
         if (await userRepository.GetByUserNameOrEmailAsync(request.EmailOrUserName, cancellationToken) is not { } user)
             return UserErrors.InvalidCredentials;
 
         if (user.IsDisabled)
-            return Result.Failure<AuthResponse>(UserErrors.DisabledUser);
+            return Result.Failure<AuthResponseDto>(UserErrors.DisabledUser);
 
         // If verification code is provided, verify it first
         if (!string.IsNullOrEmpty(request.VerificationCode))
@@ -29,7 +29,7 @@ internal sealed class LoginCommandHandler(
             if (!isValid || newEmail is null || userId != user.Id)
             {
                 logger.LogWarning("Invalid verification code provided for user {UserId}", user.Id);
-                return Result.Failure<AuthResponse>(UserErrors.InvalidCode);
+                return Result.Failure<AuthResponseDto>(UserErrors.InvalidCode);
             }
 
             // Confirm the email
@@ -78,7 +78,7 @@ internal sealed class LoginCommandHandler(
 
         logger.LogInformation("User {UserId} logged in. All previous sessions have been invalidated.", user.Id);
 
-        return Result.Success(new AuthResponse(
+        return Result.Success(new AuthResponseDto(
             user.Id,
             user.FirstName,
             user.LastName,

@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.Application.Features.Authentication.Dtos;
 
-public record AuthResponse(
+public record AuthResponseDto(
     string Id,
     string FirstName,
     string LastName,

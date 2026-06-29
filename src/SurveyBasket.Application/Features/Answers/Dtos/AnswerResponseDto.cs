@@ -1,3 +1,3 @@
 ﻿namespace SurveyBasket.Application.Features.Answers.Dtos;
 
-public record AnswerResponse(int Id, string Content);
+public record AnswerResponseDto(int Id, string Content);

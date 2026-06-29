@@ -2,8 +2,8 @@
 
 namespace SurveyBasket.Application.Features.Votes.Dtos;
 
-public record AvailableQuestionResponse(
+public record AvailableQuestionResponseDto(
     int Id,
     string Content,
-    IEnumerable<AnswerResponse> Answers
+    IEnumerable<AnswerResponseDto> Answers
 );

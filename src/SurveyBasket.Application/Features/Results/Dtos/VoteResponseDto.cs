@@ -1,7 +1,7 @@
 ﻿namespace SurveyBasket.Application.Features.Results.Dtos;
 
-public record VoteResponse(
+public record VoteResponseDto(
     string VoterName,
     DateTime VoteDate,
-    IEnumerable<QuestionAnswerResponse> SelectedAnswers
+    IEnumerable<QuestionAnswerResponseDto> SelectedAnswers
 );

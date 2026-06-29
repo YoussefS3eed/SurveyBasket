@@ -2,4 +2,4 @@
 
 namespace SurveyBasket.Application.Features.Questions.Dtos;
 
-public record QuestionResponse(int Id, string Content, IEnumerable<AnswerResponse> Answers);
+public record QuestionResponseDto(int Id, string Content, IEnumerable<AnswerResponseDto> Answers);

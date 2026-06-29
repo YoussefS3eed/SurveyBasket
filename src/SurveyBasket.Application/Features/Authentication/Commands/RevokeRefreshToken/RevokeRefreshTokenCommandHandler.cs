@@ -12,18 +12,18 @@ internal class RevokeRefreshTokenCommandHandler(IUserRepository userRepository, 
         var userId = jwtProvider.ValidateToken(request.Token);
 
         if (string.IsNullOrEmpty(userId))
-            return Result.Failure<AuthResponse>(UserErrors.InvalidJwtToken);
+            return Result.Failure<AuthResponseDto>(UserErrors.InvalidJwtToken);
 
         var user = await userRepository.GetByIdAsync(userId, cancellationToken);
 
         if (user is null)
-            return Result.Failure<AuthResponse>(UserErrors.InvalidJwtToken);
+            return Result.Failure<AuthResponseDto>(UserErrors.InvalidJwtToken);
 
         var storedRefreshToken = user.RefreshTokens
             .SingleOrDefault(rt => rt.Token == request.RefreshToken && rt.IsActive);
 
         if (storedRefreshToken is null)
-            return Result.Failure<AuthResponse>(UserErrors.InvalidRefreshToken);
+            return Result.Failure<AuthResponseDto>(UserErrors.InvalidRefreshToken);
 
         storedRefreshToken.RevokedOn = DateTime.UtcNow;
 

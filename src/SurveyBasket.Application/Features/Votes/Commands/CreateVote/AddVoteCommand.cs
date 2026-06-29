@@ -4,5 +4,5 @@ namespace SurveyBasket.Application.Features.Votes.Commands.CreateVote;
 
 public record AddVoteCommand(
     int PollId,
-    IEnumerable<VoteAnswerRequest> Answers
+    IEnumerable<VoteAnswerRequestDto> Answers
 ) : IRequest<Result>;

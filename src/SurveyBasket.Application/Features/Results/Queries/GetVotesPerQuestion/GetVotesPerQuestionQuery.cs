@@ -4,7 +4,7 @@ using SurveyBasket.Application.Features.Results.Dtos;
 
 namespace SurveyBasket.Application.Features.Results.Queries.GetVotesPerQuestion;
 
-public record GetVotesPerQuestionQuery(int PollId) : ICachedQuery<Result<IEnumerable<VotesPerQuestionResponse>>>
+public record GetVotesPerQuestionQuery(int PollId) : ICachedQuery<Result<IEnumerable<VotesPerQuestionResponseDto>>>
 {
     public string CacheKey => CacheKeys.VotesPerQuestion(PollId);
     public TimeSpan? Expiration => TimeSpan.FromMinutes(20);

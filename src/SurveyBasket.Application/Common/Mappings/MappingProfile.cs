@@ -11,20 +11,20 @@ public class MappingProfile : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<Question, QuestionResponse>()
-            .Map(dest => dest.Answers, src => src.Answers.Adapt<IEnumerable<AnswerResponse>>());
+        config.NewConfig<Question, QuestionResponseDto>()
+            .Map(dest => dest.Answers, src => src.Answers.Adapt<IEnumerable<AnswerResponseDto>>());
 
-        config.NewConfig<Question, AvailableQuestionResponse>()
-            .Map(dest => dest.Answers, src => src.Answers.Where(a => a.IsActive).Adapt<IEnumerable<AnswerResponse>>());
+        config.NewConfig<Question, AvailableQuestionResponseDto>()
+            .Map(dest => dest.Answers, src => src.Answers.Where(a => a.IsActive).Adapt<IEnumerable<AnswerResponseDto>>());
 
-        // Vote → VoteResponse
-        config.NewConfig<Vote, VoteResponse>()
+        // Vote → VoteResponseDto
+        config.NewConfig<Vote, VoteResponseDto>()
             .Map(dest => dest.VoterName, src => $"{src.User.FirstName} {src.User.LastName}")
             .Map(dest => dest.VoteDate, src => src.SubmittedOn)
             .Map(dest => dest.SelectedAnswers, src => src.VoteAnswers);
 
-        // VoteAnswer → QuestionAnswerResponse
-        config.NewConfig<VoteAnswer, QuestionAnswerResponse>()
+        // VoteAnswer → QuestionAnswerResponseDto
+        config.NewConfig<VoteAnswer, QuestionAnswerResponseDto>()
             .Map(dest => dest.Question, src => src.Question.Content)
             .Map(dest => dest.Answer, src => src.Answer.Content);
 

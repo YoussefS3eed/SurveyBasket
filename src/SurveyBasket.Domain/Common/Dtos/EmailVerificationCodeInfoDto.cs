@@ -1,6 +1,6 @@
 namespace SurveyBasket.Domain.Common.Dtos;
 
-public record EmailVerificationCodeInfo(
+public record EmailVerificationCodeInfoDto(
     string Code,
     string NewEmail,
     DateTime ExpiresAt,

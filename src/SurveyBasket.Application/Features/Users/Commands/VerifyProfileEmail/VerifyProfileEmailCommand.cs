@@ -4,4 +4,4 @@ namespace SurveyBasket.Application.Features.Users.Commands.VerifyProfileEmail;
 
 public sealed record VerifyProfileEmailCommand(
     string Code
-) : IRequest<Result<AuthResponse>>;
+) : IRequest<Result<AuthResponseDto>>;

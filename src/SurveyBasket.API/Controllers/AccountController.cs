@@ -33,7 +33,7 @@ public sealed class AccountController(ISender sender) : ControllerBase
     }
 
     [HttpPost("verify-email")]
-    [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> VerifyEmail([FromBody] VerifyProfileEmailCommand command, CancellationToken cancellationToken)

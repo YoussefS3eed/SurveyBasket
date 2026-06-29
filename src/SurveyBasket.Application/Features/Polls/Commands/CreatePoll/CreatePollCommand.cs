@@ -9,7 +9,7 @@ public record CreatePollCommand(
     bool IsPublished,
     DateOnly StartsAt,
     DateOnly EndsAt
-) : ICacheInvalidationCommand<Result<PollResponse>>
+) : ICacheInvalidationCommand<Result<PollResponseDto>>
 {
     public IEnumerable<string> CacheKeys =>
     [
